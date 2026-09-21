@@ -1,4 +1,4 @@
-# chain-intelligence-platform
+# supply-chain-intelligence-platform
 
 ## Agentic Supply Chain Intelligence & Operations Platform
 
