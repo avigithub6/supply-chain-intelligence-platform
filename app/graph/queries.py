@@ -283,3 +283,39 @@ MATCH (order_node:Order {
 
 MERGE (supplier)-[:SUPPLIES]->(product)
 """
+
+GET_ORDER_GRAPH_CONTEXT_QUERY = """
+MATCH (order_node:Order {
+    order_number: $order_number
+})
+
+OPTIONAL MATCH (order_node)-[:CONTAINS]->(product:Product)
+
+OPTIONAL MATCH (product)-[inventory:STORED_AT]->(warehouse:Warehouse)
+
+OPTIONAL MATCH (order_node)-[:HAS_SHIPMENT]->(shipment:Shipment)
+
+OPTIONAL MATCH (shipment)-[:PROVIDED_BY]->(supplier:Supplier)
+
+RETURN
+    order_node.order_number AS order_number,
+    order_node.customer_name AS customer_name,
+    order_node.product_sku AS product_sku,
+    order_node.quantity AS quantity,
+    order_node.status AS order_status,
+
+    product.product_sku AS graph_product_sku,
+
+    warehouse.name AS warehouse,
+    inventory.current_stock AS current_stock,
+    inventory.reorder_point AS reorder_point,
+
+    shipment.shipment_number AS shipment_number,
+    shipment.status AS shipment_status,
+    shipment.expected_delivery AS expected_delivery,
+
+    supplier.supplier_code AS supplier_code,
+    supplier.name AS supplier_name,
+    supplier.location AS supplier_location,
+    supplier.reliability_score AS supplier_reliability
+"""

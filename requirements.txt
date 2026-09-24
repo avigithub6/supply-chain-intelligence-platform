@@ -11,3 +11,4 @@ pytest-asyncio
 sentence-transformers
 qdrant-client
 neo4j
+langgraph

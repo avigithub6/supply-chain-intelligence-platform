@@ -1,4 +1,4 @@
-﻿from langgraph.graph import END, START, StateGraph
+from langgraph.graph import END, START, StateGraph
 
 from app.agents.data_agent import data_agent_node
 from app.agents.graph_agent import graph_agent_node
@@ -9,6 +9,10 @@ from app.agents.supervisor import supervisor_node
 
 
 def route_after_supervisor(state: AgentState) -> str:
+    """
+    Decide which agent should run first after the supervisor.
+    """
+
     required_agents = state.get("required_agents", [])
 
     if not required_agents:
@@ -18,6 +22,10 @@ def route_after_supervisor(state: AgentState) -> str:
 
 
 def route_after_data(state: AgentState) -> str:
+    """
+    Decide which agent should run after the data agent.
+    """
+
     required_agents = state.get("required_agents", [])
 
     if "graph_agent" in required_agents:
@@ -30,6 +38,10 @@ def route_after_data(state: AgentState) -> str:
 
 
 def route_after_graph(state: AgentState) -> str:
+    """
+    Decide which agent should run after the graph agent.
+    """
+
     required_agents = state.get("required_agents", [])
 
     if "rag_agent" in required_agents:
@@ -39,12 +51,21 @@ def route_after_graph(state: AgentState) -> str:
 
 
 def route_after_rag(state: AgentState) -> str:
+    """
+    The recommendation agent runs after RAG.
+    """
+
     return "recommendation_agent"
 
 
 def build_supply_chain_graph():
+    """
+    Build and compile the Supply Chain LangGraph workflow.
+    """
+
     builder = StateGraph(AgentState)
 
+    # Register nodes
     builder.add_node("supervisor", supervisor_node)
     builder.add_node("data_agent", data_agent_node)
     builder.add_node("graph_agent", graph_agent_node)
@@ -54,8 +75,10 @@ def build_supply_chain_graph():
         recommendation_agent_node,
     )
 
+    # Entry point
     builder.add_edge(START, "supervisor")
 
+    # Supervisor routing
     builder.add_conditional_edges(
         "supervisor",
         route_after_supervisor,
@@ -67,6 +90,7 @@ def build_supply_chain_graph():
         },
     )
 
+    # Data agent routing
     builder.add_conditional_edges(
         "data_agent",
         route_after_data,
@@ -77,6 +101,7 @@ def build_supply_chain_graph():
         },
     )
 
+    # Graph agent routing
     builder.add_conditional_edges(
         "graph_agent",
         route_after_graph,
@@ -86,6 +111,7 @@ def build_supply_chain_graph():
         },
     )
 
+    # RAG always goes to recommendation
     builder.add_conditional_edges(
         "rag_agent",
         route_after_rag,
@@ -94,9 +120,14 @@ def build_supply_chain_graph():
         },
     )
 
-    builder.add_edge("recommendation_agent", END)
+    # Recommendation is the final node
+    builder.add_edge(
+        "recommendation_agent",
+        END,
+    )
 
     return builder.compile()
 
 
+# Default compiled graph for application use
 supply_chain_graph = build_supply_chain_graph()
