@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection_name: str = "supplychain_knowledge"
 
+    neo4j_uri: str = "bolt://localhost:7687"
+    neo4j_username: str = "neo4j"
+    neo4j_password: str
+
     log_level: str = "INFO"
 
     model_config = SettingsConfigDict(
