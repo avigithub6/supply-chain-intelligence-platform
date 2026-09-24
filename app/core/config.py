@@ -8,6 +8,9 @@ class Settings(BaseSettings):
 
     database_url: str
 
+    qdrant_url: str = "http://localhost:6333"
+    qdrant_collection_name: str = "supplychain_knowledge"
+
     log_level: str = "INFO"
 
     model_config = SettingsConfigDict(

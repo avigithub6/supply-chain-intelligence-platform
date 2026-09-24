@@ -1,0 +1,41 @@
+SUPPLIER DELAY MANAGEMENT POLICY
+
+Purpose:
+Define the operational process for handling supplier-related shipment delays.
+
+Initial Investigation:
+
+When a shipment is delayed, operations personnel must verify:
+
+- Shipment number
+- Order number
+- Supplier code
+- Shipment status
+- Expected delivery date
+
+Supplier Assessment:
+
+After confirming the shipment delay, the supplier's historical reliability
+should be reviewed.
+
+A low reliability score may indicate an increased risk of repeated delays.
+
+Operational Response:
+
+For an active delay:
+
+1. Contact the supplier.
+2. Request an updated estimated delivery date.
+3. Record the supplier response.
+4. Assess customer impact.
+5. Escalate when required.
+
+Customer Impact:
+
+If a supplier delay affects a customer order, the operations team should
+evaluate the expected customer delivery impact before taking action.
+
+Escalation:
+
+Repeated supplier delays should be escalated to the responsible supplier
+management team.

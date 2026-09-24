@@ -1,0 +1,28 @@
+SUPPLIER ESCALATION POLICY
+
+Purpose:
+
+Define when supplier-related operational issues should be escalated.
+
+Escalation Conditions:
+
+Supplier issues may require escalation when:
+
+- Shipments remain delayed.
+- Supplier reliability is consistently low.
+- Customer orders are materially affected.
+- Supplier does not provide an updated delivery commitment.
+- Repeated operational incidents occur.
+
+Escalation Process:
+
+1. Verify the operational issue.
+2. Collect relevant shipment and supplier information.
+3. Contact the supplier.
+4. Record the supplier response.
+5. Escalate unresolved or repeated issues to supplier management.
+
+Important:
+
+Escalation decisions should be based on verified operational data and
+applicable company policies.

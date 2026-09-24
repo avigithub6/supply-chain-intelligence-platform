@@ -1,0 +1,40 @@
+CUSTOMER ORDER DELAY POLICY
+
+Purpose:
+
+Define the operational approach for customer orders affected by supply
+chain delays.
+
+Delay Verification:
+
+Before communicating a delay, operations personnel should verify the
+order and associated shipment information.
+
+Required Information:
+
+- Order number
+- Customer
+- Product SKU
+- Quantity
+- Shipment status
+- Expected delivery date
+
+Customer Communication:
+
+Customer communication should be based on verified operational information.
+
+The system should not claim a delivery date unless a reliable delivery
+estimate is available.
+
+Recommended Communication:
+
+When a delay is confirmed, provide:
+
+1. Current order status.
+2. Reason for the delay when verified.
+3. Updated expected delivery information when available.
+4. Appropriate next steps.
+
+Accuracy:
+
+Customer-facing responses should avoid unsupported assumptions.

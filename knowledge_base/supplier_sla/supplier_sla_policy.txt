@@ -1,0 +1,42 @@
+SUPPLIER SERVICE LEVEL AGREEMENT POLICY
+
+Document Type:
+Supplier SLA
+
+Purpose:
+This document defines the standard service level expectations for suppliers
+participating in the supply chain.
+
+Delivery Performance:
+
+Suppliers are expected to deliver shipments within the agreed delivery
+date specified in the purchase or shipment record.
+
+A shipment is considered delayed when the actual or current delivery date
+exceeds the expected delivery date.
+
+Supplier Reliability:
+
+Supplier reliability is evaluated using historical delivery performance,
+shipment delays, fulfillment consistency, and operational incidents.
+
+Suppliers with consistently low reliability scores should receive additional
+monitoring.
+
+Delay Escalation:
+
+If a supplier shipment becomes delayed, the operations team should first
+verify the shipment status and expected delivery date.
+
+If the delay exceeds the acceptable operational threshold, the supplier
+should be contacted for an updated delivery commitment.
+
+Repeated supplier delays should be escalated to the supplier management team.
+
+Recommended Actions:
+
+1. Verify shipment status.
+2. Check expected delivery date.
+3. Review supplier reliability.
+4. Contact supplier for updated delivery commitment.
+5. Escalate repeated or severe delays.

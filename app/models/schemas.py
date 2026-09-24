@@ -1,6 +1,6 @@
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SupplierResponse(BaseModel):
@@ -49,3 +49,38 @@ class HealthResponse(BaseModel):
     status: str
     service: str
     version: str
+
+class KnowledgeSearchRequest(BaseModel):
+    query: str = Field(
+        min_length=1,
+        description="Natural-language supply-chain knowledge query.",
+    )
+
+    retrieval_limit: int = Field(
+        default=5,
+        ge=1,
+        le=20,
+        description="Maximum number of chunks retrieved from Qdrant.",
+    )
+
+    top_k: int = Field(
+        default=3,
+        ge=1,
+        le=10,
+        description="Number of chunks returned after reranking.",
+    )
+
+
+class KnowledgeSearchChunkResponse(BaseModel):
+    content: str
+    source: str
+    category: str
+    file_name: str
+    chunk_index: int
+    retrieval_score: float
+    rerank_score: float | None
+
+
+class KnowledgeSearchResponse(BaseModel):
+    query: str
+    chunks: list[KnowledgeSearchChunkResponse]

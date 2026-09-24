@@ -1,0 +1,55 @@
+STANDARD OPERATING PROCEDURE
+DELAYED CUSTOMER ORDER
+
+Purpose:
+
+Provide a standard procedure for investigating customer orders that are
+potentially delayed.
+
+Step 1: Identify Order
+
+Retrieve the order using the order number.
+
+Verify:
+
+- Customer
+- Product SKU
+- Quantity
+- Order status
+
+Step 2: Check Shipment
+
+Identify the shipment associated with the order.
+
+Verify:
+
+- Shipment number
+- Shipment status
+- Expected delivery date
+- Supplier
+
+Step 3: Check Supplier
+
+Retrieve supplier information and review supplier reliability.
+
+Step 4: Check Inventory
+
+Verify current inventory for the ordered product SKU.
+
+Compare current stock against the reorder point.
+
+Step 5: Determine Root Cause
+
+Potential causes include:
+
+- Supplier shipment delay
+- Insufficient inventory
+- Warehouse availability issue
+- Operational processing delay
+
+Step 6: Recommend Action
+
+The system should provide a recommendation based on verified operational
+data and relevant supply-chain policies.
+
+Human approval may be required before executing operational actions.

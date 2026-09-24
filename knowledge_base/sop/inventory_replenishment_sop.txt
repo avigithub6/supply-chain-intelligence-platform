@@ -1,0 +1,35 @@
+INVENTORY REPLENISHMENT SOP
+
+Purpose:
+
+Define the standard process for identifying inventory that requires
+replenishment.
+
+Inventory Monitoring:
+
+Inventory should be monitored using current stock and reorder point.
+
+Low Stock Condition:
+
+An item is considered low stock when current inventory is less than or
+equal to the defined reorder point.
+
+Replenishment Investigation:
+
+When low stock is detected:
+
+1. Identify the product SKU.
+2. Identify the warehouse.
+3. Check current inventory.
+4. Check reorder point.
+5. Review related supplier information.
+6. Review open shipments when available.
+
+Recommended Action:
+
+The operations team should evaluate replenishment requirements based on
+current demand, inventory levels, supplier availability, and expected
+delivery timelines.
+
+Human approval should be obtained before executing material procurement
+actions.
