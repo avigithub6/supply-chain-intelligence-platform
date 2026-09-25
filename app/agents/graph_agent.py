@@ -1,6 +1,55 @@
+from typing import Any
+
 from app.agents.state import AgentState
 from app.graph.neo4j_client import neo4j_client
 from app.graph.queries import GET_ORDER_GRAPH_CONTEXT_QUERY
+
+
+def _make_json_safe(value: Any) -> Any:
+    """
+    Convert Neo4j temporal and nested values into
+    LangGraph/msgpack-safe Python values.
+
+    Neo4j may return objects such as:
+    - neo4j.time.Date
+    - neo4j.time.DateTime
+    - datetime/date/time
+
+    These objects are not directly serializable by
+    LangGraph's checkpoint serializer.
+    """
+
+    if isinstance(value, dict):
+        return {
+            key: _make_json_safe(item)
+            for key, item in value.items()
+        }
+
+    if isinstance(value, list):
+        return [
+            _make_json_safe(item)
+            for item in value
+        ]
+
+    if isinstance(value, tuple):
+        return [
+            _make_json_safe(item)
+            for item in value
+        ]
+
+    if isinstance(value, set):
+        return [
+            _make_json_safe(item)
+            for item in value
+        ]
+
+    if hasattr(value, "isoformat"):
+        try:
+            return value.isoformat()
+        except (TypeError, ValueError):
+            pass
+
+    return value
 
 
 def graph_agent_node(state: AgentState) -> AgentState:
@@ -46,7 +95,7 @@ def graph_agent_node(state: AgentState) -> AgentState:
                 ],
             }
 
-        graph_result = records[0]
+        graph_result = _make_json_safe(records[0])
 
         return {
             **state,

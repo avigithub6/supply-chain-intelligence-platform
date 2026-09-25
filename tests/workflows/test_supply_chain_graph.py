@@ -1,15 +1,21 @@
-from unittest.mock import patch
+from langgraph.types import Command
 
+from app.agents.state import AgentState
 from app.workflows.supply_chain_graph import (
-    build_supply_chain_graph,
+    route_after_approval,
     route_after_data,
+    route_after_execution,
     route_after_graph,
+    route_after_rag,
+    route_after_recommendation,
     route_after_supervisor,
+    route_after_workflow_action,
+    supply_chain_graph,
 )
 
 
-def test_route_after_supervisor_order_investigation():
-    state = {
+def test_route_after_supervisor_with_order():
+    state: AgentState = {
         "required_agents": [
             "data_agent",
             "graph_agent",
@@ -17,33 +23,19 @@ def test_route_after_supervisor_order_investigation():
         ]
     }
 
-    route = route_after_supervisor(state)
-
-    assert route == "data_agent"
+    assert route_after_supervisor(state) == "data_agent"
 
 
-def test_route_after_supervisor_general_query():
-    state = {
-        "required_agents": ["rag_agent"]
-    }
-
-    route = route_after_supervisor(state)
-
-    assert route == "rag_agent"
-
-
-def test_route_after_supervisor_empty():
-    state = {
+def test_route_after_supervisor_without_agents():
+    state: AgentState = {
         "required_agents": []
     }
 
-    route = route_after_supervisor(state)
-
-    assert route == "recommendation_agent"
+    assert route_after_supervisor(state) == "recommendation_agent"
 
 
-def test_route_after_data():
-    state = {
+def test_route_after_data_to_graph():
+    state: AgentState = {
         "required_agents": [
             "data_agent",
             "graph_agent",
@@ -51,13 +43,32 @@ def test_route_after_data():
         ]
     }
 
-    route = route_after_data(state)
-
-    assert route == "graph_agent"
+    assert route_after_data(state) == "graph_agent"
 
 
-def test_route_after_graph():
-    state = {
+def test_route_after_data_to_rag():
+    state: AgentState = {
+        "required_agents": [
+            "data_agent",
+            "rag_agent",
+        ]
+    }
+
+    assert route_after_data(state) == "rag_agent"
+
+
+def test_route_after_data_to_recommendation():
+    state: AgentState = {
+        "required_agents": [
+            "data_agent",
+        ]
+    }
+
+    assert route_after_data(state) == "recommendation_agent"
+
+
+def test_route_after_graph_to_rag():
+    state: AgentState = {
         "required_agents": [
             "data_agent",
             "graph_agent",
@@ -65,208 +76,222 @@ def test_route_after_graph():
         ]
     }
 
-    route = route_after_graph(state)
-
-    assert route == "rag_agent"
+    assert route_after_graph(state) == "rag_agent"
 
 
-@patch(
-    "app.workflows.supply_chain_graph.recommendation_agent_node"
-)
-@patch(
-    "app.workflows.supply_chain_graph.rag_agent_node"
-)
-@patch(
-    "app.workflows.supply_chain_graph.graph_agent_node"
-)
-@patch(
-    "app.workflows.supply_chain_graph.data_agent_node"
-)
-def test_complete_order_investigation_workflow(
-    mock_data_agent,
-    mock_graph_agent,
-    mock_rag_agent,
-    mock_recommendation_agent,
-):
-    mock_data_agent.side_effect = lambda state: {
-        **state,
-        "data_result": {
-            "order": {
-                "order_number": "ORD-10482",
-                "status": "delayed",
-                "product_sku": "SKU-0077",
-                "quantity": 445,
-            },
-            "shipment": {
-                "shipment_number": "SHIP-20482",
-                "supplier_code": "SUP-017",
-                "status": "delayed",
-                "expected_delivery": "2026-09-16",
-            },
-        },
-        "completed_agents": [
-            *state.get("completed_agents", []),
+def test_route_after_graph_to_recommendation():
+    state: AgentState = {
+        "required_agents": [
             "data_agent",
-        ],
-    }
-
-    mock_graph_agent.side_effect = lambda state: {
-        **state,
-        "graph_result": {
-            "order_number": "ORD-10482",
-            "product_sku": "SKU-0077",
-            "warehouse": "Mumbai",
-            "current_stock": 35,
-            "reorder_point": 250,
-            "supplier_code": "SUP-017",
-            "supplier_reliability": 62.5,
-        },
-        "completed_agents": [
-            *state.get("completed_agents", []),
             "graph_agent",
-        ],
+        ]
     }
 
-    mock_rag_agent.side_effect = lambda state: {
-        **state,
-        "rag_result": [
-            {
-                "content": "Supplier delay policy",
-                "source": "knowledge_base",
-                "category": "supplier_sla",
-                "file_name": "supplier_delay_policy.txt",
-                "chunk_index": 0,
-                "retrieval_score": 0.90,
-                "rerank_score": 0.95,
-            }
-        ],
-        "completed_agents": [
-            *state.get("completed_agents", []),
-            "rag_agent",
-        ],
-    }
+    assert route_after_graph(state) == "recommendation_agent"
 
-    mock_recommendation_agent.side_effect = lambda state: {
-        **state,
-        "recommendation": {
+
+def test_route_after_rag():
+    state: AgentState = {}
+
+    assert route_after_rag(state) == "recommendation_agent"
+
+
+def test_route_after_recommendation():
+    state: AgentState = {}
+
+    assert route_after_recommendation(state) == "workflow_action"
+
+
+def test_route_after_workflow_action_with_pending_action():
+    state: AgentState = {
+        "pending_action": {
+            "action": "escalate_supplier",
             "order_number": "ORD-10482",
-            "risk_level": "high",
-            "recommendations": [
-                "Escalate delayed shipment.",
-                "Review supplier performance.",
-                "Initiate replenishment.",
-            ],
+            "reason": "Supplier reliability is below threshold.",
+            "requested_by": "recommendation_agent",
+        }
+    }
+
+    assert route_after_workflow_action(state) == "human_approval"
+
+
+def test_route_after_workflow_action_without_pending_action():
+    state: AgentState = {
+        "pending_action": None
+    }
+
+    assert route_after_workflow_action(state) == "end"
+
+
+def test_route_after_approval_approved():
+    state: AgentState = {
+        "approval_status": "approved"
+    }
+
+    assert route_after_approval(state) == "execution_agent"
+
+
+def test_route_after_approval_rejected():
+    state: AgentState = {
+        "approval_status": "rejected"
+    }
+
+    assert route_after_approval(state) == "execution_agent"
+
+
+def test_route_after_approval_pending():
+    state: AgentState = {
+        "approval_status": "pending"
+    }
+
+    assert route_after_approval(state) == "end"
+
+
+def test_route_after_execution():
+    state: AgentState = {
+        "execution_status": "executed"
+    }
+
+    assert route_after_execution(state) == "end"
+
+
+def test_complete_order_investigation_workflow():
+    config = {
+        "configurable": {
+            "thread_id": "test-order-10482-interrupt",
+        }
+    }
+
+    # ---------------------------------------------------------
+    # First invocation
+    #
+    # The workflow should pause at human approval.
+    # ---------------------------------------------------------
+
+    result = supply_chain_graph.invoke(
+        {
+            "user_query": "Why is order ORD-10482 delayed?",
+            "completed_agents": [],
         },
-        "completed_agents": [
-            *state.get("completed_agents", []),
-            "recommendation_agent",
-        ],
-    }
+        config=config,
+    )
 
-    graph = build_supply_chain_graph()
+    assert "__interrupt__" in result
 
-    initial_state = {
-        "user_query": "Why is ORD-10482 delayed?",
-        "completed_agents": [],
-        "errors": [],
-    }
+    interrupts = result["__interrupt__"]
 
-    result = graph.invoke(initial_state)
+    assert len(interrupts) == 1
 
-    assert result["order_number"] == "ORD-10482"
+    interrupt_value = interrupts[0].value
 
-    assert result["required_agents"] == [
-        "data_agent",
-        "graph_agent",
-        "rag_agent",
-    ]
+    assert interrupt_value["type"] == "human_approval"
+    assert interrupt_value["action"] == "escalate_delayed_shipment"
+    assert interrupt_value["order_number"] == "ORD-10482"
 
-    assert result["data_result"] is not None
-    assert result["graph_result"] is not None
-    assert result["rag_result"]
+    assert (
+        interrupt_value["requested_by"]
+        == "recommendation_agent"
+    )
 
-    assert result["recommendation"] is not None
+    # ---------------------------------------------------------
+    # Resume workflow with human approval
+    # ---------------------------------------------------------
 
-    assert result["recommendation"]["risk_level"] == "high"
-
-    assert result["completed_agents"] == [
-        "data_agent",
-        "graph_agent",
-        "rag_agent",
-        "recommendation_agent",
-    ]
-
-    mock_data_agent.assert_called_once()
-    mock_graph_agent.assert_called_once()
-    mock_rag_agent.assert_called_once()
-    mock_recommendation_agent.assert_called_once()
-
-
-@patch(
-    "app.workflows.supply_chain_graph.recommendation_agent_node"
-)
-@patch(
-    "app.workflows.supply_chain_graph.rag_agent_node"
-)
-def test_general_query_runs_rag_workflow(
-    mock_rag_agent,
-    mock_recommendation_agent,
-):
-    mock_rag_agent.side_effect = lambda state: {
-        **state,
-        "rag_result": [
-            {
-                "content": "Supplier delay policy",
-                "source": "knowledge_base",
-                "category": "supplier_sla",
-                "file_name": "supplier_delay_policy.txt",
-                "chunk_index": 0,
-                "retrieval_score": 0.90,
-                "rerank_score": 0.95,
+    resumed_result = supply_chain_graph.invoke(
+        Command(
+            resume={
+                "decision": "approved",
+                "reviewer": "operations_manager",
+                "comment": (
+                    "Approved delayed shipment escalation."
+                ),
             }
-        ],
-        "completed_agents": [
-            *state.get("completed_agents", []),
-            "rag_agent",
-        ],
-    }
+        ),
+        config=config,
+    )
 
-    mock_recommendation_agent.side_effect = lambda state: {
-        **state,
-        "recommendation": {
-            "risk_level": "low",
-            "recommendations": [
-                "Continue monitoring.",
-            ],
+    # ---------------------------------------------------------
+    # Verify workflow resumed successfully
+    # ---------------------------------------------------------
+
+    assert resumed_result["order_number"] == "ORD-10482"
+
+    assert "data_agent" in resumed_result["completed_agents"]
+    assert "graph_agent" in resumed_result["completed_agents"]
+    assert "rag_agent" in resumed_result["completed_agents"]
+    assert (
+        "recommendation_agent"
+        in resumed_result["completed_agents"]
+    )
+    assert (
+        "workflow_action"
+        in resumed_result["completed_agents"]
+    )
+    assert (
+        "human_approval"
+        in resumed_result["completed_agents"]
+    )
+    assert (
+        "execution_agent"
+        in resumed_result["completed_agents"]
+    )
+
+    # ---------------------------------------------------------
+    # Verify human approval
+    # ---------------------------------------------------------
+
+    assert resumed_result["approval_status"] == "approved"
+
+    assert (
+        resumed_result["approved_by"]
+        == "operations_manager"
+    )
+
+    assert (
+        resumed_result["approval_comment"]
+        == "Approved delayed shipment escalation."
+    )
+
+    # ---------------------------------------------------------
+    # Verify execution
+    # ---------------------------------------------------------
+
+    assert resumed_result["execution_status"] == "executed"
+
+    assert (
+        resumed_result["execution_result"]["success"]
+        is True
+    )
+
+    assert (
+        resumed_result["execution_result"]["status"]
+        == "executed"
+    )
+
+    assert (
+        resumed_result["execution_result"]["action"]
+        == "escalate_delayed_shipment"
+    )
+
+
+def test_general_query_runs_rag_workflow():
+    result = supply_chain_graph.invoke(
+        {
+            "user_query": "What is the supplier delay policy?",
+            "completed_agents": [],
         },
-        "completed_agents": [
-            *state.get("completed_agents", []),
-            "recommendation_agent",
-        ],
-    }
+        config={
+            "configurable": {
+                "thread_id": "test-general-query-v2",
+            }
+        },
+    )
 
-    graph = build_supply_chain_graph()
+    assert result["order_number"] is None
 
-    initial_state = {
-        "user_query": "What is the supplier delay policy?",
-        "completed_agents": [],
-        "errors": [],
-    }
+    assert "rag_agent" in result["completed_agents"]
+    assert "recommendation_agent" in result["completed_agents"]
+    assert "workflow_action" in result["completed_agents"]
 
-    result = graph.invoke(initial_state)
-
-    assert result["required_agents"] == ["rag_agent"]
-
-    assert result["rag_result"]
-
-    assert result["recommendation"] is not None
-
-    assert result["recommendation"]["risk_level"] == "low"
-
-    assert result["completed_agents"] == [
-        "rag_agent",
-        "recommendation_agent",
-    ]
-
-    mock_rag_agent.assert_called_once()
-    mock_recommendation_agent.assert_called_once()
+    assert result["pending_action"] is None
+    assert result["approval_status"] == "not_required"

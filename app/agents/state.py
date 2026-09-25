@@ -1,4 +1,4 @@
-from typing import Any, TypedDict
+from typing import Any, Literal, TypedDict
 
 
 class AgentState(TypedDict, total=False):
@@ -34,3 +34,40 @@ class AgentState(TypedDict, total=False):
 
     # Stores non-fatal errors from individual agents
     errors: list[str]
+
+    # ---------------------------------------------------------
+    # Human approval state
+    # ---------------------------------------------------------
+
+    # Action waiting for approval
+    pending_action: dict[str, Any] | None
+
+    # Current approval status
+    approval_status: Literal[
+        "not_required",
+        "pending",
+        "approved",
+        "rejected",
+    ]
+
+    # Human reviewer who approved/rejected the action
+    approved_by: str | None
+
+    # Optional human comment
+    approval_comment: str | None
+
+    # ---------------------------------------------------------
+    # Action execution state
+    # ---------------------------------------------------------
+
+    # Current execution status
+    execution_status: Literal[
+        "not_required",
+        "pending",
+        "executed",
+        "failed",
+        "skipped",
+    ]
+
+    # Result returned by the execution layer
+    execution_result: dict[str, Any] | None

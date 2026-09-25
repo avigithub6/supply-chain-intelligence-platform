@@ -27,6 +27,10 @@ def recommendation_agent_node(state: AgentState) -> AgentState:
                 *state.get("errors", []),
                 "Recommendation Agent: no investigation results available.",
             ],
+            "completed_agents": [
+                *state.get("completed_agents", []),
+                "recommendation_agent",
+            ],
         }
 
     # ---------------------------------------------------------
@@ -175,7 +179,8 @@ def recommendation_agent_node(state: AgentState) -> AgentState:
         )
 
         recommendations.append(
-            f"Initiate replenishment for {product_sku or 'the affected product'}."
+            f"Initiate replenishment for "
+            f"{product_sku or 'the affected product'}."
         )
 
     # ---------------------------------------------------------

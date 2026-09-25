@@ -1,106 +1,156 @@
 # supply-chain-intelligence-platform
 
-# Agentic Supply Chain Intelligence & Operations Platform
+## Agentic Supply Chain Intelligence & Operations Platform
 
-The **supply-chain-intelligence-platform** is a production-oriented AI platform designed to investigate supply-chain problems, retrieve trusted operational knowledge, analyze relationships between supply-chain entities, generate recommendations, and support operational workflows.
+A production-oriented AI platform for investigating supply-chain problems using **PostgreSQL, RAG, Qdrant, Neo4j, LangGraph, deterministic business rules, structured tools, and Human-in-the-Loop workflow execution**.
 
-The platform is being developed incrementally, starting with a reliable data and API foundation before introducing RAG, knowledge graphs, multi-agent workflows, forecasting, conversational interfaces, evaluation, observability, and production hardening.
+The platform is designed around a simple principle:
+
+> **LLMs should not be the source of truth for operational decisions.**
+
+Instead, the system combines:
+
+* PostgreSQL for structured operational data
+* Qdrant for controlled knowledge retrieval
+* Neo4j for relationship-based investigation
+* Deterministic business rules for operational recommendations
+* LangGraph for multi-agent orchestration
+* Structured tools for operational access
+* Human approval for high-impact workflow actions
+* Controlled execution boundaries for operational actions
 
 ---
 
 # Project Goal
 
-The goal is to build an AI copilot that can answer operational questions such as:
-
-> **"Why is order ORD-10482 delayed?"**
-
-Instead of relying only on an LLM, the system combines:
-
-* Structured operational data
-* Retrieval-Augmented Generation (RAG)
-* Embeddings and vector search
-* Knowledge graphs
-* Multi-agent workflows
-* Deterministic business rules
-* Statistical and machine-learning models
-* Tool calling
-* Structured outputs
-* Human approval
-* Evaluation and observability
-
-The intended final architecture is:
+The goal of this project is to build a production-style **Agentic Supply Chain Intelligence Platform** capable of answering operational questions such as:
 
 ```text
-                              User
-                                │
-                                ▼
-                     Conversational Interface
-                                │
-                                ▼
-                         FastAPI Gateway
-                                │
-                                ▼
-                      LangGraph Supervisor
-                                │
-              ┌─────────────────┼─────────────────┐
-              │                 │                 │
-              ▼                 ▼                 ▼
-         Data Agent         RAG Agent        Graph Agent
-              │                 │                 │
-              ▼                 ▼                 ▼
-         PostgreSQL          Qdrant             Neo4j
-              │                 │                 │
-              └─────────────────┼─────────────────┘
-                                │
-                                ▼
-                    Recommendation Agent
-                                │
-                                ▼
-                         Human Approval
-                                │
-                                ▼
-                         Workflow Tools
-                                │
-                                ▼
-                             Action
+Why is order ORD-10482 delayed?
 ```
+
+Instead of relying only on an LLM, the platform investigates the problem across multiple data sources.
+
+For example:
+
+```text
+Order
+  ↓
+Shipment
+  ↓
+Supplier
+  ↓
+Supplier Reliability
+
+Order
+  ↓
+Product
+  ↓
+Warehouse
+  ↓
+Inventory
+
+Knowledge Base
+  ↓
+Supplier SLA / SOP / Policies
+```
+
+The system then combines the evidence and produces an operational recommendation.
+
+For actions that can affect real operations, the system introduces a human approval checkpoint before execution.
 
 ---
 
 # What Does This Platform Actually Do?
 
-Imagine a supply-chain manager asks:
+The platform is designed to answer supply-chain operational questions by combining multiple intelligence sources.
 
-> **"Why is order ORD-10482 delayed?"**
-
-The system does not simply ask an LLM to guess the answer.
-
-Instead, it investigates the problem using multiple trusted sources:
-
-1. PostgreSQL checks order, inventory, supplier, and shipment data.
-2. The RAG system retrieves relevant supplier policies and SOPs.
-3. Neo4j analyzes relationships between orders, products, suppliers, shipments, and warehouses.
-4. Business rules identify operational conditions.
-5. ML models can provide predictions where required.
-6. AI agents coordinate the investigation.
-7. The system produces a structured recommendation.
-8. High-impact operational actions can require human approval.
-9. The investigation and execution can be evaluated and monitored.
-
-In simple terms:
+For an order such as:
 
 ```text
-Data
-  ↓
-Investigation
-  ↓
-Evidence
-  ↓
+ORD-10482
+```
+
+the system can investigate:
+
+### 1. Operational Data
+
+From PostgreSQL:
+
+```text
+Order status
+Shipment status
+Product
+Quantity
+Supplier
+Expected delivery
+Inventory
+```
+
+### 2. Knowledge
+
+From Qdrant:
+
+```text
+Supplier SLA
+Supplier delay policy
+Delayed order SOP
+Inventory replenishment SOP
+Customer delay policy
+Supplier escalation policy
+```
+
+### 3. Relationships
+
+From Neo4j:
+
+```text
+Order
+ ├── Product
+ │      └── Warehouse
+ │
+ └── Shipment
+        └── Supplier
+```
+
+### 4. Recommendations
+
+Deterministic business rules identify operational risks such as:
+
+```text
+Delayed shipment
+
+Low supplier reliability
+
+Low inventory
+
+Supplier escalation requirement
+```
+
+### 5. Workflow Actions
+
+The system can prepare controlled actions such as:
+
+```text
+Escalate Supplier
+
+Escalate Delayed Shipment
+
+Initiate Replenishment
+```
+
+### 6. Human Approval
+
+Sensitive actions require human approval before execution.
+
+```text
 Recommendation
-  ↓
+      ↓
+Workflow Action
+      ↓
 Human Approval
-  ↓
-Action
+      ↓
+Execution
 ```
 
 ---
@@ -112,226 +162,202 @@ Action
 | Milestone 1 — Data & Backend Foundation                         | ✅ Completed |
 | Milestone 2 — RAG Knowledge System                              | ✅ Completed |
 | Milestone 3 — Knowledge Graph                                   | ✅ Completed |
-| Milestone 4 — LangGraph Multi-Agent Architecture                | 🔜 Next     |
-| Milestone 5 — Tools & Workflow Integration                      | Planned     |
-| Milestone 6 — Recommendation & Forecasting                      | Planned     |
+| Milestone 4 — LangGraph Multi-Agent Architecture                | ✅ Completed |
+| Milestone 5 — Tools & Workflow Integration                      | ✅ Completed |
+| Milestone 6 — Recommendation & Forecasting                      | 🔜 Next     |
 | Milestone 7 — Evaluation & Observability                        | Planned     |
 | Milestone 8 — Conversational Interfaces & Production Deployment | Planned     |
 
 ---
 
-# Milestone 1 — Supply Chain Data & Backend Foundation
+# Milestone 1 — Data & Backend Foundation
 
 **Status: Completed**
 
-Milestone 1 established the backend and operational data foundation required by the future AI-agent system.
+Milestone 1 established the backend foundation of the platform.
 
-## Implemented
+Implemented:
 
 * FastAPI application
-* Uvicorn development server
-* Pydantic response schemas
-* Pydantic Settings configuration
-* Environment-based configuration
-* Application logging
-* SQLAlchemy ORM
 * PostgreSQL database
-* Database session management
+* SQLAlchemy ORM
+* Pydantic schemas
+* Pydantic Settings
+* Environment configuration
+* Application logging
 * Database initialization
-* Synthetic supply-chain dataset generation
-* CSV dataset generation
-* PostgreSQL data seeding
-* Order APIs
-* Inventory APIs
-* Supplier APIs
-* Shipment APIs
+* Synthetic supply-chain dataset
+* Database seeding
+* Service layer
+* REST APIs
 * Pagination
 * Filtering
-* 404 error handling
-* Service layer
-* Automated API tests
+* Error handling
+* API tests
 
 ---
 
-# Supply Chain Data Model
+# Backend Architecture
 
-The current operational dataset contains synthetic supply-chain data.
+```text
+FastAPI
+   ↓
+API Routers
+   ↓
+Service Layer
+   ↓
+SQLAlchemy
+   ↓
+PostgreSQL
+```
 
-## Suppliers
+The service layer keeps business and database logic separate from API routes.
 
-**50 supplier records**
+---
 
-Fields include:
+# Database
 
-* Supplier code
-* Supplier name
-* Location
-* Reliability score
+PostgreSQL database:
 
-## Inventory
+```text
+supplychain
+```
 
-**150 inventory records**
+Main tables:
 
-Fields include:
+```text
+orders
+inventory
+shipments
+suppliers
+```
 
-* Product SKU
-* Warehouse
-* Current stock
-* Reorder point
+---
 
-## Orders
+# Synthetic Dataset
 
-**1,000 order records**
+The project contains realistic synthetic supply-chain data.
 
-Fields include:
+Generated datasets include:
 
-* Order number
-* Customer
-* Product SKU
-* Quantity
-* Order status
+```text
+Suppliers
+Inventory
+Orders
+Shipments
+```
 
-## Shipments
+Current seeded dataset:
 
-**1,000 shipment records**
+```text
+Suppliers  → 50
+Inventory  → 150
+Orders     → 1000
+Shipments  → 1000
+```
 
-Fields include:
+CSV datasets are stored inside:
 
-* Shipment number
-* Order number
-* Supplier code
-* Shipment status
-* Expected delivery date
-
-The dataset is synthetic and intended for development, testing, demonstrations, and AI-agent evaluation.
+```text
+data/
+```
 
 ---
 
 # Deterministic Investigation Scenario
 
-A known investigation scenario has been created around:
+One important test scenario is:
 
 ```text
+Order:
 ORD-10482
+
+Customer:
+Customer 0482
+
+Product:
+SKU-0077
+
+Quantity:
+445
+
+Order Status:
+delayed
 ```
 
-The scenario connects multiple operational entities:
+Shipment:
 
 ```text
-Order
-  ↓
-Shipment
-  ↓
-Supplier
+SHIP-20482
 
-Order
-  ↓
-Product
-  ↓
-Inventory
+Supplier:
+SUP-017
+
+Status:
+delayed
+
+Expected Delivery:
+2026-09-16
 ```
 
-Current scenario:
+Supplier:
 
 ```text
-Order
-────────────────────
-Order Number: ORD-10482
-Status: delayed
-Quantity: 445
-Product: SKU-0077
+Supplier:
+SUP-017
 
-Shipment
-────────────────────
-Shipment Number: SHIP-20482
-Status: delayed
-Expected Delivery: 2026-09-16
+Reliability:
+62.5
 
-Supplier
-────────────────────
-Supplier Code: SUP-017
-Name: Supplier 017 Industries
-Reliability Score: 62.5
-Location: Pune
-
-Inventory
-────────────────────
-Product: SKU-0077
-Warehouse: Mumbai
-Current Stock: 35
-Reorder Point: 250
+Location:
+Pune
 ```
 
-This deterministic scenario will later be used to evaluate whether the AI system can correctly investigate a supply-chain issue using multiple data sources.
+Inventory:
+
+```text
+SKU:
+SKU-0077
+
+Warehouse:
+Mumbai
+
+Current Stock:
+35
+
+Reorder Point:
+250
+```
+
+This scenario is used throughout the project to validate the intelligence workflow.
 
 ---
 
 # API Endpoints
 
-## Health
+Implemented APIs include:
 
 ```text
-GET /health
+/orders
+/inventory
+/suppliers
+/shipments
+/health
 ```
 
-## Orders
+The APIs support:
+
+* Pagination
+* Filtering
+* Resource lookup
+* Validation
+* 404 handling
+
+Swagger documentation is available through:
 
 ```text
-GET /orders
-GET /orders/{order_number}
-GET /orders?status=delayed
-GET /orders?skip=0&limit=20
+http://127.0.0.1:8000/docs
 ```
-
-## Inventory
-
-```text
-GET /inventory
-GET /inventory/{product_sku}
-GET /inventory?low_stock=true
-GET /inventory?warehouse=Mumbai
-```
-
-## Suppliers
-
-```text
-GET /suppliers
-GET /suppliers/{supplier_code}
-```
-
-## Shipments
-
-```text
-GET /shipments
-GET /shipments/{shipment_number}
-GET /shipments?status=delayed
-```
-
-## RAG
-
-```text
-POST /rag/search
-```
-
----
-
-# Milestone 1 Architecture
-
-The initial backend follows:
-
-```text
-Client / Swagger
-       ↓
-FastAPI API Layer
-       ↓
-Service Layer
-       ↓
-SQLAlchemy
-       ↓
-PostgreSQL
-```
-
-The service layer keeps business/data-access logic separate from API route handling.
 
 ---
 
@@ -339,60 +365,36 @@ The service layer keeps business/data-access logic separate from API route handl
 
 **Status: Completed**
 
-Milestone 2 introduced the Retrieval-Augmented Generation knowledge layer.
+Milestone 2 introduced a controlled Retrieval-Augmented Generation foundation.
 
-The objective was to allow future AI agents to retrieve trusted supply-chain knowledge from controlled internal documents instead of depending only on an LLM's general knowledge.
-
-The completed RAG pipeline is:
+The system uses:
 
 ```text
-Knowledge Base Documents
-        ↓
+Knowledge Base
+     ↓
 Document Ingestion
-        ↓
-Text Chunking
-        ↓
-Sentence Transformer Embeddings
-        ↓
-Qdrant Vector Database
-        ↓
+     ↓
+Chunking
+     ↓
+Embeddings
+     ↓
+Qdrant
+     ↓
 Semantic Retrieval
-        ↓
-Keyword-Based Reranking
-        ↓
-Knowledge Search Service
-        ↓
-FastAPI RAG API
+     ↓
+Keyword Reranking
+     ↓
+Relevant Knowledge
 ```
-
----
-
-# Milestone 2 Goals
-
-The main objectives were:
-
-* Build a controlled supply-chain knowledge base
-* Load and validate knowledge documents
-* Split documents into searchable chunks
-* Generate vector embeddings
-* Store embeddings in Qdrant
-* Implement semantic retrieval
-* Implement deterministic reranking
-* Expose RAG functionality through FastAPI
-* Add validation and error handling
-* Add retrieval evaluation foundations
-* Add RAG observability foundations
-* Add automated tests
 
 ---
 
 # Knowledge Base
 
-The RAG system currently uses a controlled knowledge base containing supply-chain operational documentation.
+The controlled knowledge base contains:
 
 ```text
 knowledge_base/
-│
 ├── supplier_sla/
 │   ├── supplier_sla_policy.txt
 │   └── supplier_delay_policy.txt
@@ -406,85 +408,50 @@ knowledge_base/
     └── supplier_escalation_policy.txt
 ```
 
-The knowledge base contains six documents covering:
+The knowledge base contains six supply-chain documents covering:
 
-* Supplier SLAs
-* Supplier delay management
-* Delayed-order procedures
+* Supplier SLA
+* Supplier delays
+* Delayed orders
 * Inventory replenishment
-* Customer delay handling
-* Supplier escalation policies
-
-These documents provide controlled sources that can later be consumed by the RAG Agent.
+* Customer delays
+* Supplier escalation
 
 ---
 
 # Document Ingestion
 
-The ingestion layer automatically discovers `.txt` files inside the knowledge base.
-
-Implemented functionality:
-
-* Recursive document discovery
-* UTF-8 file reading
-* Empty-document filtering
-* Relative source path generation
-* Category extraction
-* File metadata preservation
-
-Each document is represented using structured metadata:
+The ingestion pipeline:
 
 ```text
-KnowledgeDocument
-
-content
-source
-category
-file_name
+TXT Documents
+      ↓
+Document Loading
+      ↓
+Recursive Chunking
+      ↓
+Metadata
+      ↓
+Embeddings
+      ↓
+Qdrant
 ```
 
-This metadata is preserved throughout the RAG pipeline so retrieved information can be traced back to its original document.
-
----
-
-# Document Chunking
-
-Large documents are divided into smaller searchable chunks.
-
-The chunking system supports:
-
-* Configurable chunk size
-* Configurable chunk overlap
-* Chunk indexing
-* Source metadata preservation
-* Input validation
-
-Current default configuration:
+Current chunking configuration:
 
 ```text
-Chunk size:     500 words
-Chunk overlap:   50 words
-```
+Chunk Size:
+500 words
 
-The overlap helps preserve context between neighboring chunks.
-
-Each generated chunk contains:
-
-```text
-content
-source
-category
-file_name
-chunk_index
+Chunk Overlap:
+50 words
 ```
 
 ---
 
 # Embeddings
 
-The project uses Sentence Transformers to convert text into numerical vector representations.
-
-Current embedding model:
+The project uses:
 
 ```text
 all-MiniLM-L6-v2
@@ -496,336 +463,78 @@ Embedding dimension:
 384
 ```
 
-The embedding service supports:
-
-* Single-text embedding
-* Batch chunk embedding
-* Normalized embeddings
-* Reusable model initialization
-
 ---
 
-# Qdrant Vector Database
+# Qdrant
 
-Qdrant is used as the vector database for semantic retrieval.
+Qdrant stores the document embeddings.
 
-Qdrant runs locally through Docker.
-
-```text
-Application
-     ↓
-Qdrant Client
-     ↓
-Qdrant
-     ↓
-supplychain_knowledge collection
-```
-
-Current vector configuration:
+Collection:
 
 ```text
-Vector size: 384
-Distance:    Cosine
+supplychain_knowledge
 ```
 
-Stored payload:
+Distance metric:
 
 ```text
-content
-source
-category
-file_name
-chunk_index
-```
-
-Deterministic point IDs are used so the same document chunk can be indexed consistently.
-
----
-
-# Qdrant Docker Service
-
-The project includes Qdrant in `docker-compose.yml`.
-
-```yaml
-qdrant:
-  image: qdrant/qdrant:latest
-  container_name: supplychain-qdrant
-  ports:
-    - "6333:6333"
-    - "6334:6334"
-  volumes:
-    - qdrant_storage:/qdrant/storage
-```
-
-Start Qdrant with:
-
-```bash
-docker compose up -d qdrant
-```
-
-Environment configuration:
-
-```env
-QDRANT_URL=http://localhost:6333
-QDRANT_COLLECTION_NAME=supplychain_knowledge
+Cosine
 ```
 
 ---
 
-# Semantic Retrieval
+# Retrieval
 
-The retriever performs:
-
-```text
-User Query
-    ↓
-Query Embedding
-    ↓
-Qdrant Vector Search
-    ↓
-Top N Relevant Chunks
-```
-
-The retrieval layer returns structured objects containing:
+The retrieval process uses:
 
 ```text
-content
-source
-category
-file_name
-chunk_index
-retrieval_score
-```
-
-The original Qdrant similarity score is preserved as:
-
-```text
-retrieval_score
-```
-
-This makes retrieval results easier to evaluate and monitor.
-
----
-
-# Reranking
-
-A deterministic keyword-based reranker was implemented after semantic retrieval.
-
-Complete pipeline:
-
-```text
-Query
-  ↓
-Embedding
-  ↓
-Qdrant Semantic Search
-  ↓
-Initial Retrieved Chunks
-  ↓
+Semantic Retrieval
+        ↓
 Keyword Reranking
-  ↓
-Top-K Results
+        ↓
+Final Results
 ```
 
-The final reranking score combines:
+Reranking combines:
 
 ```text
-70% semantic retrieval score
-+
-30% keyword matching score
+70% semantic score
+30% keyword score
 ```
 
-The reranker stores:
+Each result contains a deterministic:
 
 ```text
 rerank_score
 ```
-
-for each returned chunk.
-
-The reranking layer is intentionally independent so it can later be replaced with a more advanced cross-encoder or learned reranker.
-
----
-
-# Knowledge Search Service
-
-A dedicated search service coordinates retrieval and reranking.
-
-```text
-KnowledgeSearchService
-        ↓
-KnowledgeRetriever
-        ↓
-Qdrant
-        ↓
-Retrieved Chunks
-        ↓
-KnowledgeReranker
-        ↓
-Final Knowledge Results
-```
-
-The service validates:
-
-* Query input
-* Retrieval limit
-* Top-K value
-
-This keeps the RAG API layer thin and makes the retrieval pipeline reusable by future agents.
 
 ---
 
 # RAG API
 
-A FastAPI endpoint was added:
+Implemented endpoint:
 
 ```text
 POST /rag/search
 ```
 
-Example request:
-
-```json
-{
-  "query": "What should we do when a supplier shipment is delayed?",
-  "retrieval_limit": 5,
-  "top_k": 3
-}
-```
-
-The response contains:
+The API supports:
 
 ```text
-query
-chunks
+retrieval_limit: 1–20
+
+top_k: 1–10
 ```
 
-Each returned chunk contains:
+The RAG layer also includes:
 
-```text
-content
-source
-category
-file_name
-chunk_index
-retrieval_score
-rerank_score
-```
+* Request IDs
+* Latency tracking
+* Error tracking
+* `X-Request-ID`
+* Retrieval evaluation foundation
 
-This allows future agents to consume the same search service rather than directly accessing Qdrant.
-
----
-
-# RAG API Validation
-
-The API validates user input using Pydantic.
-
-Current limits:
-
-```text
-retrieval_limit:
-1 → 20
-
-top_k:
-1 → 10
-```
-
-Examples:
-
-```text
-Empty query            → 422
-retrieval_limit = 0    → 422
-top_k = 0              → 422
-retrieval_limit > 20   → 422
-```
-
----
-
-# RAG Error Handling
-
-The RAG API separates validation errors from unexpected infrastructure failures.
-
-Validation failures are handled separately from unexpected retrieval/infrastructure failures.
-
-Infrastructure failures are converted into controlled API responses rather than exposing internal implementation details to clients.
-
----
-
-# RAG Observability Foundation
-
-Basic production-oriented observability was added to the RAG execution flow.
-
-Each RAG request receives a unique:
-
-```text
-Request ID
-```
-
-The system tracks:
-
-```text
-Request ID
-Total latency
-Retrieved chunk count
-Success / failure
-Error type
-```
-
-Execution flow:
-
-```text
-RAG Request
-    ↓
-Generate Request ID
-    ↓
-Start Latency Timer
-    ↓
-Execute Retrieval
-    ↓
-Execute Reranking
-    ↓
-Record Metrics
-    ↓
-Structured Log
-```
-
-Example log information:
-
-```text
-RAG execution completed
-
-request_id=<unique-id>
-latency_ms=<value>
-retrieval_count=<value>
-success=True
-```
-
-Failed executions record:
-
-```text
-request_id
-latency
-error type
-error message
-```
-
-The request ID can also be returned through:
-
-```text
-X-Request-ID
-```
-
-HTTP response header.
-
-More advanced distributed tracing, metrics collection, dashboards, alerting, and production monitoring are planned for later milestones.
-
----
-
-# RAG Evaluation Foundation
-
-A retrieval evaluation foundation has been added.
-
-The evaluation layer is designed to support metrics such as:
+Evaluation metrics include:
 
 ```text
 Recall@K
@@ -833,52 +542,290 @@ Precision@K
 MRR
 ```
 
-The evaluation layer is separated from the retrieval implementation so retrieval quality can be measured independently.
-
-Future evaluation will expand into:
-
-* RAG answer quality
-* Groundedness
-* Agent decisions
-* Tool execution
-* Recommendation quality
-* End-to-end workflow quality
-
 ---
 
 # Milestone 3 — Knowledge Graph
 
 **Status: Completed**
 
-Milestone 3 introduced **Neo4j** as the relationship-based intelligence layer of the platform.
+Milestone 3 introduced Neo4j to represent supply-chain relationships.
 
-The goal was to represent relationships between supply-chain entities that are difficult to model using vector search alone.
+The graph complements PostgreSQL and RAG by answering relationship-oriented questions.
 
-The completed architecture is:
+---
+
+# Knowledge Graph Architecture
 
 ```text
 PostgreSQL
     ↓
-Graph Ingestion Service
+Graph Ingestion
     ↓
 Neo4j
-    ↓
-Relationship-Based Investigation
+```
+
+Main graph entities:
+
+```text
+Supplier
+Product
+Warehouse
+Order
+Shipment
 ```
 
 ---
 
-# Why a Knowledge Graph?
-
-Vector search answers questions based primarily on semantic similarity.
-
-A graph database provides a different capability:
+# Graph Relationships
 
 ```text
-Who is connected to what?
+Supplier ──SUPPLIES──> Product
+
+Product ──STORED_AT──> Warehouse
+
+Order ──CONTAINS──> Product
+
+Order ──HAS_SHIPMENT──> Shipment
+
+Shipment ──PROVIDED_BY──> Supplier
 ```
 
-For supply-chain investigations, this is useful for relationships such as:
+---
+
+# Neo4j Dataset
+
+Current graph contains:
+
+```text
+Order Nodes       → 1000
+Product Nodes     → 150
+Shipment Nodes    → 1000
+Supplier Nodes    → 50
+Warehouse Nodes   → 6
+```
+
+Relationships:
+
+```text
+CONTAINS          → 1000
+HAS_SHIPMENT      → 1000
+PROVIDED_BY       → 1000
+STORED_AT         → 150
+SUPPLIES          → 937
+```
+
+---
+
+# Example Graph Investigation
+
+For:
+
+```text
+ORD-10482
+```
+
+the graph relationship is:
+
+```text
+Order ORD-10482
+      │
+      ├── CONTAINS ──> Product SKU-0077
+      │                     │
+      │                     └── STORED_AT ──> Warehouse Mumbai
+      │
+      └── HAS_SHIPMENT ──> Shipment SHIP-20482
+                                │
+                                └── PROVIDED_BY ──> Supplier SUP-017
+```
+
+This provides relationship-based context for the agent workflow.
+
+---
+
+# Milestone 3 Outcome
+
+The platform now has three independent intelligence sources:
+
+```text
+PostgreSQL
+    +
+Qdrant
+    +
+Neo4j
+```
+
+These sources provide:
+
+```text
+Structured Data
+Knowledge
+Relationships
+```
+
+---
+
+# Current Multi-Source Intelligence Architecture
+
+```text
+                 Supply Chain Query
+                        │
+        ┌───────────────┼───────────────┐
+        ↓               ↓               ↓
+   PostgreSQL         Qdrant          Neo4j
+        │               │               │
+ Structured Data     Knowledge      Relationships
+        │               │               │
+        └───────────────┼───────────────┘
+                        ↓
+              Multi-Source Evidence
+```
+
+---
+
+# Milestone 4 — LangGraph Multi-Agent Architecture
+
+**Status: Completed**
+
+Milestone 4 introduced the LangGraph multi-agent orchestration layer.
+
+The objective was to connect the existing PostgreSQL, Qdrant, and Neo4j intelligence layers through a shared agent workflow.
+
+Implemented:
+
+* LangGraph workflow
+* Shared `AgentState`
+* Supervisor Agent
+* Data Agent
+* RAG Agent
+* Graph Agent
+* Recommendation Agent
+* Conditional routing
+* Structured agent results
+* Agent execution tracking
+* Agent error handling
+* End-to-end investigation workflow
+* Automated agent tests
+
+---
+
+# Shared Agent State
+
+Agents communicate through a shared:
+
+```text
+AgentState
+```
+
+The state contains information such as:
+
+```text
+user_query
+
+order_number
+
+required_agents
+
+data_result
+
+rag_result
+
+graph_result
+
+recommendation
+
+final_answer
+
+completed_agents
+
+errors
+```
+
+This allows individual agents to contribute investigation results without directly coupling agents together.
+
+---
+
+# Supervisor Agent
+
+The Supervisor Agent analyzes the user query and determines which agents are required.
+
+For an order-specific question:
+
+```text
+Why is order ORD-10482 delayed?
+```
+
+the supervisor identifies:
+
+```text
+Data Agent
+
+Graph Agent
+
+RAG Agent
+```
+
+The workflow then routes the investigation through the required agents.
+
+For a general knowledge question without an order number, the workflow can route to the RAG Agent.
+
+---
+
+# Data Agent
+
+The Data Agent retrieves factual operational information from PostgreSQL using the existing service layer.
+
+It retrieves:
+
+* Order details
+* Order status
+* Product SKU
+* Quantity
+* Shipment information
+* Supplier information
+* Expected delivery date
+
+The Data Agent does not directly implement database access logic.
+
+It reuses the existing service layer.
+
+---
+
+# RAG Agent
+
+The RAG Agent connects the LangGraph workflow with the existing RAG knowledge system.
+
+Flow:
+
+```text
+User Query
+    ↓
+Knowledge Search Service
+    ↓
+Qdrant
+    ↓
+Semantic Retrieval
+    ↓
+Deterministic Reranking
+    ↓
+RAG Agent
+```
+
+The agent can retrieve:
+
+* Supplier SLA
+* Supplier delay policies
+* Delayed order SOP
+* Inventory replenishment SOP
+* Customer delay policies
+* Supplier escalation policies
+
+---
+
+# Graph Agent
+
+The Graph Agent connects the LangGraph workflow with Neo4j.
+
+It investigates relationships such as:
 
 ```text
 Order
@@ -886,7 +833,11 @@ Order
 Shipment
   ↓
 Supplier
+```
 
+and:
+
+```text
 Order
   ↓
 Product
@@ -894,402 +845,541 @@ Product
 Warehouse
 ```
 
-This makes Neo4j complementary to PostgreSQL and Qdrant rather than a replacement for them.
+Neo4j temporal values are converted into JSON-safe values before being stored in the shared agent state.
+
+This ensures compatibility with LangGraph checkpoint serialization.
 
 ---
 
-# Neo4j Graph Model
+# Recommendation Agent
 
-The implemented graph contains five node types.
+The Recommendation Agent combines the available operational evidence and applies deterministic business rules.
 
-## Supplier
-
-Primary identifier:
+Example:
 
 ```text
-supplier_code
+Delayed Shipment
+       +
+Low Supplier Reliability
+       +
+Low Inventory
+       ↓
+Operational Recommendation
 ```
 
-## Product
-
-Primary identifier:
+Example recommendations include:
 
 ```text
-product_sku
+Escalate the delayed shipment for operational review.
+
+Escalate supplier SUP-017 and review supplier performance.
+
+Initiate replenishment for SKU-0077.
 ```
 
-## Warehouse
-
-Primary identifier:
+Risk levels are determined using deterministic rules:
 
 ```text
-name
+Low
+Medium
+High
 ```
 
-## Order
-
-Primary identifier:
-
-```text
-order_number
-```
-
-## Shipment
-
-Primary identifier:
-
-```text
-shipment_number
-```
+The recommendation layer does not allow an LLM to arbitrarily invent operational actions.
 
 ---
 
-# Graph Relationships
+# Milestone 4 Workflow
 
-The implemented relationships are:
-
-```text
-Supplier ──SUPPLIES──────> Product
-
-Product ───STORED_AT─────> Warehouse
-
-Order ─────CONTAINS──────> Product
-
-Order ─────HAS_SHIPMENT──> Shipment
-
-Shipment ──PROVIDED_BY────> Supplier
-```
-
-The `STORED_AT` relationship also stores inventory-specific properties:
+The completed workflow is:
 
 ```text
-current_stock
-reorder_point
+User Query
+    ↓
+Supervisor
+    ↓
+Data Agent
+    ↓
+Graph Agent
+    ↓
+RAG Agent
+    ↓
+Recommendation Agent
 ```
 
-The graph therefore combines entity relationships with relevant operational attributes.
-
----
-
-# Why Customer Is Not a Graph Node
-
-The current PostgreSQL dataset contains:
-
-```text
-customer_name
-```
-
-but does not contain a stable customer identifier.
-
-Therefore, customer information remains a property on the `Order` node rather than being represented as a separate entity.
-
-This avoids creating unstable graph identities.
-
----
-
-# Neo4j Configuration
-
-Neo4j runs locally through Docker.
-
-```yaml
-neo4j:
-  image: neo4j:5
-  container_name: supplychain-neo4j
-  ports:
-    - "7474:7474"
-    - "7687:7687"
-  environment:
-    NEO4J_AUTH: neo4j/<configured-password>
-  volumes:
-    - neo4j_data:/data
-    - neo4j_logs:/logs
-    - neo4j_plugins:/plugins
-```
-
-Environment configuration:
-
-```env
-NEO4J_URI=bolt://localhost:7687
-NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=<configured-password>
-```
-
-The actual password is stored only in `.env` and should never be committed to Git.
-
----
-
-# Neo4j Client
-
-The project contains a dedicated Neo4j client abstraction:
-
-```text
-app/graph/neo4j_client.py
-```
-
-The client provides:
-
-* Neo4j driver initialization
-* Connectivity verification
-* Parameterized Cypher execution
-* Driver lifecycle management
-
-This keeps database infrastructure separate from graph business logic.
-
----
-
-# Graph Schema
-
-The graph schema contains uniqueness constraints for:
-
-```text
-Supplier.supplier_code
-Product.product_sku
-Warehouse.name
-Order.order_number
-Shipment.shipment_number
-```
-
-These constraints provide stable identifiers and protect graph integrity.
-
-The schema is initialized using:
-
-```bash
-python -m app.graph.schema
-```
-
----
-
-# Graph Data Ingestion
-
-The project includes a PostgreSQL-to-Neo4j ingestion service.
-
-```text
-PostgreSQL
-     ↓
-SQLAlchemy
-     ↓
-GraphIngestionService
-     ↓
-Parameterized Cypher
-     ↓
-Neo4j
-```
-
-The ingestion process:
-
-1. Loads suppliers from PostgreSQL.
-2. Loads inventory records.
-3. Loads orders.
-4. Loads shipments.
-5. Builds unique product records.
-6. Builds unique warehouse records.
-7. Creates graph nodes.
-8. Creates order-product relationships.
-9. Creates order-shipment relationships.
-10. Creates shipment-supplier relationships.
-11. Creates product-warehouse relationships.
-12. Derives supplier-product relationships from actual shipment/order paths.
-
----
-
-# Batch Graph Ingestion
-
-The ingestion service uses parameterized Cypher queries with:
-
-```text
-UNWIND
-```
-
-and:
-
-```text
-MERGE
-```
-
-This allows large datasets to be inserted in batches while maintaining idempotent behavior.
-
-Default batch size:
-
-```text
-500 records
-```
-
-The ingestion can be executed with:
-
-```bash
-python -m app.graph.ingestion
-```
-
----
-
-# Milestone 3 Graph Statistics
-
-The completed graph contains:
-
-## Nodes
-
-```text
-Order       1000
-Product      150
-Shipment    1000
-Supplier      50
-Warehouse      6
-```
-
-## Relationships
-
-```text
-CONTAINS          1000
-HAS_SHIPMENT      1000
-PROVIDED_BY       1000
-STORED_AT          150
-SUPPLIES           937
-```
-
-The `SUPPLIES` relationship count is 937 because it represents unique Supplier → Product relationships. Multiple shipments can connect the same supplier and product, while `MERGE` prevents duplicate relationships.
-
----
-
-# Verified Graph Investigation
-
-The deterministic scenario `ORD-10482` was successfully verified in Neo4j.
-
-Graph path:
-
-```text
-Order ORD-10482
-       │
-       ├──CONTAINS──> Product SKU-0077
-       │                    │
-       │                    └──STORED_AT──> Warehouse Mumbai
-       │
-       └──HAS_SHIPMENT──> Shipment SHIP-20482
-                                │
-                                └──PROVIDED_BY──> Supplier SUP-017
-```
-
-Verified data:
-
-```text
-Order
-────────────────────────
-ORD-10482
-Status: delayed
-Quantity: 445
-Product: SKU-0077
-
-Shipment
-────────────────────────
-SHIP-20482
-Status: delayed
-Expected Delivery: 2026-09-16
-
-Supplier
-────────────────────────
-SUP-017
-Supplier 017 Industries
-Reliability: 62.5
-Location: Pune
-
-Warehouse
-────────────────────────
-Mumbai
-
-Inventory
-────────────────────────
-Current Stock: 35
-Reorder Point: 250
-```
-
-This establishes a deterministic multi-entity investigation path that can later be consumed by the Graph Agent.
-
----
-
-# Current Multi-Source Intelligence Architecture
-
-After Milestone 3, the platform contains three complementary intelligence/data layers:
-
-```text
-                    Supply Chain Platform
-                            │
-          ┌─────────────────┼─────────────────┐
-          │                 │                 │
-          ▼                 ▼                 ▼
-     PostgreSQL           Qdrant            Neo4j
-   Structured Data    Semantic Knowledge   Relationships
-          │                 │                 │
-          └─────────────────┼─────────────────┘
-                            │
-                            ▼
-                     Future AI Agents
-```
-
-Each system has a different responsibility:
-
-| System     | Primary Purpose                  |
-| ---------- | -------------------------------- |
-| PostgreSQL | Structured operational data      |
-| Qdrant     | Semantic knowledge retrieval     |
-| Neo4j      | Relationship-based investigation |
-
-This separation prevents the LLM from becoming the source of truth.
+Conditional routing determines which agent executes next.
 
 ---
 
 # Complete Investigation Architecture
 
-The future investigation of:
+The platform now combines:
 
 ```text
-Why is order ORD-10482 delayed?
+                     User Query
+                         ↓
+                    Supervisor
+                         ↓
+                  ┌──────┴──────┐
+                  ↓             ↓
+             Data Agent     RAG Agent
+                  ↓
+             Graph Agent
+                  ↓
+          Recommendation Agent
 ```
 
-can combine:
+---
+
+# Milestone 5 — Tools & Workflow Integration
+
+**Status: Completed**
+
+Milestone 5 extended the multi-agent architecture with structured tools, workflow actions, human approval, and controlled execution.
+
+The milestone was implemented incrementally:
 
 ```text
-                 User Question
-                      │
-                      ▼
-              LangGraph Supervisor
-                      │
-       ┌──────────────┼──────────────┐
-       ▼              ▼              ▼
-   Data Agent      RAG Agent      Graph Agent
-       │              │              │
-       ▼              ▼              ▼
- PostgreSQL         Qdrant          Neo4j
-       │              │              │
-       └──────────────┼──────────────┘
-                      │
-                      ▼
-             Recommendation Agent
-                      │
-                      ▼
-                Human Approval
-                      │
-                      ▼
-                Workflow Tools
+5.1 Tool Foundation
+       ↓
+5.2 Core Read-only Tools
+       ↓
+5.3 Workflow / Action Tools
+       ↓
+5.4 Human Approval Foundation
+       ↓
+5.5 Workflow Action Agent
+       ↓
+5.6 Controlled Action Execution
+       ↓
+5.7 Persistent Human-in-the-Loop
 ```
+
+---
+
+# Milestone 5.1 — Tool Foundation
+
+**Status: Completed**
+
+Implemented:
+
+* Structured tool schemas
+* Pydantic tool inputs
+* Pydantic tool outputs
+* Order lookup tool
+* Input validation
+* Database session management
+* Service-layer integration
+* Tool tests
+
+Architecture:
+
+```text
+Agent
+  ↓
+Structured Tool
+  ↓
+Service Layer
+  ↓
+PostgreSQL
+```
+
+The tool layer prevents agents from directly accessing database implementation details.
+
+---
+
+# Milestone 5.2 — Core Read-only Tools
+
+**Status: Completed**
+
+Added deterministic read-only tools for:
+
+```text
+Orders
+
+Inventory
+
+Suppliers
+
+Shipments
+```
+
+The tools reuse the existing PostgreSQL service layer.
+
+Architecture:
+
+```text
+Agent
+   ↓
+Structured Tool
+   ↓
+Service Layer
+   ↓
+PostgreSQL
+```
+
+This provides a controlled interface between the agent layer and operational data.
+
+---
+
+# Milestone 5.3 — Workflow / Action Tools
+
+**Status: Completed**
+
+Added controlled workflow actions:
+
+```text
+escalate_supplier
+
+escalate_delayed_shipment
+
+initiate_replenishment
+```
+
+Each workflow action contains:
+
+```text
+action
+
+order_number
+
+reason
+
+requested_by
+```
+
+Actions initially enter:
+
+```text
+pending_approval
+```
+
+No real external operational side effect is automatically performed at this stage.
+
+---
+
+# Milestone 5.4 — Human Approval Foundation
+
+**Status: Completed**
+
+Added structured human approval handling.
+
+Supported approval states:
+
+```text
+not_required
+
+pending
+
+approved
+
+rejected
+```
+
+Approval information contains:
+
+```text
+action
+
+order_number
+
+decision
+
+reviewer
+
+comment
+```
+
+This creates a controlled separation:
+
+```text
+Recommendation
+      ↓
+Approval Decision
+      ↓
+Execution
+```
+
+---
+
+# Milestone 5.5 — Workflow Action Agent
+
+**Status: Completed**
+
+Added:
+
+```text
+Workflow Action Agent
+```
+
+The agent converts a recommendation into a structured pending workflow action.
+
+Example:
+
+```text
+Recommendation Agent
+        ↓
+"Escalate supplier SUP-017"
+        ↓
+Workflow Action Agent
+        ↓
+escalate_supplier
+        ↓
+Pending Approval
+```
+
+The Workflow Action Agent does not execute the action.
+
+It prepares the action for human review.
+
+---
+
+# Milestone 5.6 — Controlled Action Execution
+
+**Status: Completed**
+
+Added:
+
+```text
+Execution Agent
+```
+
+and:
+
+```text
+Workflow Execution Tool
+```
+
+Execution behavior:
+
+```text
+No Action
+    ↓
+No Execution
+```
+
+```text
+Pending Approval
+    ↓
+Wait
+```
+
+```text
+Rejected
+    ↓
+Skip
+```
+
+```text
+Approved
+    ↓
+Execution Agent
+    ↓
+Workflow Execution Tool
+```
+
+The Execution Agent checks the approval state before execution.
+
+Approved actions can proceed to the execution tool.
+
+Rejected actions are skipped.
+
+Pending actions remain waiting for approval.
+
+The current execution tool represents a controlled execution boundary and does not yet perform real external side effects.
+
+Future integrations can connect this layer to:
+
+```text
+ERP Systems
+
+Supplier Portals
+
+Email Systems
+
+Inventory Systems
+
+Ticketing Platforms
+```
+
+---
+
+# Milestone 5.7 — Persistent Human-in-the-Loop
+
+**Status: Completed**
+
+Milestone 5.7 introduced resumable Human-in-the-Loop execution using LangGraph.
+
+Implemented:
+
+* `InMemorySaver` checkpointing
+* Thread-based workflow execution
+* LangGraph `interrupt()`
+* `Command(resume=...)`
+* Human approval checkpoint
+* Reviewer tracking
+* Approval comments
+* Approved execution path
+* Rejected execution path
+* Pending approval handling
+* Controlled execution after approval
+
+The workflow can pause at the human approval checkpoint and resume using the same workflow thread.
+
+Example:
+
+```python
+Command(
+    resume={
+        "decision": "approved",
+        "reviewer": "operations_manager",
+        "comment": "Approved delayed shipment escalation.",
+    }
+)
+```
+
+Human-in-the-Loop flow:
+
+```text
+Recommendation Agent
+        ↓
+Workflow Action Agent
+        ↓
+Pending Action
+        ↓
+LangGraph interrupt()
+        ↓
+Human Review
+      ↙   ↘
+Approved  Rejected
+    ↓        ↓
+Execution   Skip
+    ↓
+Workflow Execution Tool
+    ↓
+Action
+```
+
+The current implementation uses:
+
+```text
+InMemorySaver
+```
+
+for checkpointing.
+
+Production-grade persistent checkpoint storage can be introduced during later production-hardening work.
+
+---
+
+# Milestone 5 Workflow
+
+The complete Milestone 5 workflow is:
+
+```text
+Recommendation Agent
+        ↓
+Workflow Action Agent
+        ↓
+Human Approval
+      ↙       ↘
+Rejected     Approved
+   ↓             ↓
+ Skip       Execution Agent
+                ↓
+        Workflow Execution Tool
+                ↓
+              Action
+```
+
+---
+
+# Complete Agentic Workflow
+
+The complete current platform architecture is:
+
+```text
+                         User Query
+                              ↓
+                     LangGraph Supervisor
+                              ↓
+              ┌───────────────┴───────────────┐
+              ↓               ↓               ↓
+         Data Agent       Graph Agent      RAG Agent
+              ↓               ↓               ↓
+         PostgreSQL         Neo4j           Qdrant
+              └───────────────┬───────────────┘
+                              ↓
+                   Recommendation Agent
+                              ↓
+                   Workflow Action Agent
+                              ↓
+                       Human Approval
+                         ↙       ↘
+                   Rejected      Approved
+                      ↓              ↓
+                    Skip       Execution Agent
+                                    ↓
+                          Workflow Execution Tool
+                                    ↓
+                                  Action
+```
+
+---
+
+# Milestone 5 Outcome
+
+Milestone 5 transformed the platform from:
+
+```text
+Investigation
+      ↓
+Recommendation
+```
+
+into:
+
+```text
+Investigation
+      ↓
+Recommendation
+      ↓
+Workflow Action
+      ↓
+Human Approval
+      ↓
+Controlled Execution
+```
+
+The platform now has the foundation for safe agentic operational workflows where AI can investigate supply-chain problems and prepare operational actions while keeping humans in control of high-impact execution.
 
 ---
 
 # Testing
 
-The project uses `pytest` for automated testing.
+The project includes unit and integration-style tests covering:
 
-The complete test suite currently contains:
+* API behavior
+* Services
+* RAG
+* Retrieval
+* Graph integration
+* Agents
+* Tools
+* Workflow actions
+* Human approval
+* Execution
+* LangGraph workflow
+* Error handling
+* Validation
+
+Current test result:
 
 ```text
-88 passed
+162 passed, 2 warnings
 ```
 
-Run:
-
-```bash
-pytest -v
-```
-
-The test suite covers the backend, RAG components, graph functionality, validation, and supporting infrastructure implemented up to the current milestones.
+The warnings are non-blocking compatibility/deprecation warnings from dependencies.
 
 ---
 
@@ -1297,46 +1387,86 @@ The test suite covers the backend, RAG components, graph functionality, validati
 
 ## Current
 
-* Python
-* FastAPI
-* Uvicorn
-* Pydantic
-* Pydantic Settings
-* SQLAlchemy
-* PostgreSQL
-* psycopg2
-* Sentence Transformers
-* all-MiniLM-L6-v2
-* Qdrant
-* Neo4j
-* Cypher
-* Docker
-* pytest
-* RAG
-* Semantic Retrieval
-* Deterministic Reranking
-* Knowledge Graphs
-* Request ID Tracking
-* Latency Tracking
-* Error Tracking
+### Backend
 
-## Upcoming
+```text
+Python
+FastAPI
+Pydantic
+Pydantic Settings
+SQLAlchemy
+PostgreSQL
+```
 
-* LangChain
-* LangGraph
-* LLM Integration
-* Multi-Agent Workflow
-* Tool Calling
-* Structured Outputs
-* Recommendation Engine
-* Forecasting / Machine Learning
-* Human Approval
-* Web Conversational Interface
-* WhatsApp Integration
-* Advanced AI Evaluation
-* Advanced Observability
-* CI/CD
-* Production Deployment
+### AI / Agentic Layer
+
+```text
+LangGraph
+LangChain Core
+Multi-Agent Workflow
+Shared Agent State
+Conditional Agent Routing
+Structured Tool Inputs
+Structured Tool Outputs
+Workflow Actions
+Human-in-the-Loop
+LangGraph Interrupts
+LangGraph Checkpointing
+```
+
+### RAG
+
+```text
+SentenceTransformers
+all-MiniLM-L6-v2
+Qdrant
+Semantic Retrieval
+Keyword Reranking
+```
+
+### Knowledge Graph
+
+```text
+Neo4j
+Cypher
+Graph-based Investigation
+```
+
+### Infrastructure
+
+```text
+Docker
+Docker Compose
+Uvicorn
+```
+
+### Testing
+
+```text
+Pytest
+FastAPI TestClient
+```
+
+---
+
+# Upcoming Technology
+
+The following technologies/features are planned for future milestones:
+
+```text
+LLM-based Agent Reasoning
+Demand Forecasting
+Inventory Forecasting
+Supplier Risk Prediction
+Delivery Delay Prediction
+Evaluation Framework Expansion
+LLM Tracing
+Observability
+Persistent Production Checkpointing
+WhatsApp Interface
+Conversational UI
+Production Deployment
+```
 
 ---
 
@@ -1346,123 +1476,114 @@ The test suite covers the backend, RAG components, graph functionality, validati
 supply-chain-intelligence-platform/
 │
 ├── app/
-│   ├── __init__.py
-│   ├── main.py
+│   │
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── state.py
+│   │   ├── supervisor.py
+│   │   ├── data_agent.py
+│   │   ├── rag_agent.py
+│   │   ├── graph_agent.py
+│   │   ├── recommendation_agent.py
+│   │   ├── workflow_agent.py
+│   │   ├── approval_agent.py
+│   │   └── execution_agent.py
+│   │
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── chat.py
+│   │   ├── health.py
+│   │   ├── inventory.py
+│   │   ├── orders.py
+│   │   ├── shipments.py
+│   │   ├── suppliers.py
+│   │   └── rag.py
 │   │
 │   ├── core/
 │   │   ├── __init__.py
 │   │   ├── config.py
 │   │   └── logging.py
 │   │
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── health.py
-│   │   ├── orders.py
-│   │   ├── inventory.py
-│   │   ├── suppliers.py
-│   │   ├── shipments.py
-│   │   └── rag_api.py
-│   │
 │   ├── database/
 │   │   ├── __init__.py
-│   │   ├── connection.py
+│   │   ├── base.py
 │   │   ├── session.py
 │   │   ├── init_db.py
 │   │   └── seed_data.py
 │   │
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── schemas.py
-│   │   └── database_models.py
-│   │
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── order_service.py
-│   │   ├── inventory_service.py
-│   │   ├── supplier_service.py
-│   │   └── shipment_service.py
-│   │
-│   ├── agents/
-│   │   ├── __init__.py
-│   │   ├── supervisor.py
-│   │   ├── data_agent.py
-│   │   ├── rag_agent.py
-│   │   ├── graph_agent.py
-│   │   └── recommendation_agent.py
+│   ├── evaluation/
+│   │   └── evaluation_metrics.py
 │   │
 │   ├── graph/
 │   │   ├── __init__.py
 │   │   ├── neo4j_client.py
 │   │   ├── queries.py
-│   │   ├── schema.py
 │   │   └── ingestion.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── schemas.py
+│   │   └── tool_schemas.py
 │   │
 │   ├── rag/
 │   │   ├── __init__.py
 │   │   ├── ingestion.py
-│   │   ├── chunking.py
 │   │   ├── embeddings.py
-│   │   ├── qdrant_client.py
-│   │   ├── qdrant_store.py
 │   │   ├── retriever.py
 │   │   ├── reranker.py
 │   │   ├── search_service.py
-│   │   ├── dependencies.py
 │   │   └── pipeline.py
+│   │
+│   ├── services/
+│   │   ├── order_service.py
+│   │   ├── inventory_service.py
+│   │   ├── supplier_service.py
+│   │   └── shipment_service.py
 │   │
 │   ├── tools/
 │   │   ├── __init__.py
 │   │   ├── order_tools.py
 │   │   ├── inventory_tools.py
 │   │   ├── supplier_tools.py
-│   │   └── workflow_tools.py
+│   │   ├── shipment_tools.py
+│   │   ├── workflow_tools.py
+│   │   └── execution_tools.py
 │   │
 │   ├── workflows/
-│   │   ├── __init__.py
 │   │   └── supply_chain_graph.py
 │   │
-│   ├── evaluation/
-│   │   ├── __init__.py
-│   │   ├── evaluation_metrics.py
-│   │   ├── rag_eval.py
-│   │   └── agent_eval.py
-│   │
-│   └── observability/
-│       ├── __init__.py
-│       ├── tracing.py
-│       ├── llm_traces.py
-│       ├── agent_execution.py
-│       ├── tool_calls.py
-│       ├── latency.py
-│       ├── errors.py
-│       └── request_ids.py
+│   └── main.py
 │
 ├── data/
-│   ├── orders.csv
 │   ├── inventory.csv
-│   ├── suppliers.csv
-│   └── shipments.csv
+│   ├── orders.csv
+│   ├── shipments.csv
+│   └── suppliers.csv
 │
 ├── knowledge_base/
 │   ├── supplier_sla/
+│   │   ├── supplier_sla_policy.txt
+│   │   └── supplier_delay_policy.txt
+│   │
 │   ├── sop/
+│   │   ├── delayed_order_sop.txt
+│   │   └── inventory_replenishment_sop.txt
+│   │
 │   └── policies/
+│       ├── customer_delay_policy.txt
+│       └── supplier_escalation_policy.txt
 │
 ├── tests/
-│   ├── __init__.py
-│   │
-│   ├── api/
 │   ├── agents/
+│   ├── api/
 │   ├── rag/
 │   ├── tools/
 │   ├── graph/
-│   ├── workflows/
 │   └── services/
 │
-├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
-├── .env.example
+├── .env
 ├── .gitignore
 └── README.md
 ```
@@ -1475,17 +1596,12 @@ supply-chain-intelligence-platform/
 
 **Status: Completed**
 
-Implemented:
-
 ```text
 FastAPI
 PostgreSQL
 SQLAlchemy
-Pydantic
-Configuration
+REST APIs
 Synthetic Data
-Data APIs
-Service Layer
 Testing
 ```
 
@@ -1495,23 +1611,15 @@ Testing
 
 **Status: Completed**
 
-Implemented:
-
 ```text
 Knowledge Base
 Document Ingestion
-Chunking
 Embeddings
 Qdrant
 Semantic Retrieval
-Deterministic Reranking
-RAG Search Service
+Reranking
 RAG API
-Request IDs
-Latency Tracking
-Error Tracking
-Evaluation Foundation
-Automated Testing
+Retrieval Evaluation
 ```
 
 ---
@@ -1520,305 +1628,247 @@ Automated Testing
 
 **Status: Completed**
 
-Implemented:
-
 ```text
 Neo4j
-Graph Schema
-Uniqueness Constraints
-Cypher Queries
-Batch Graph Ingestion
-PostgreSQL → Neo4j Synchronization
-Supplier Relationships
-Product Relationships
-Order Relationships
-Shipment Relationships
-Warehouse Relationships
-Graph Investigation
-Graph Validation
-```
-
-Verified:
-
-```text
-Orders:      1000
-Products:     150
-Shipments:   1000
-Suppliers:     50
-Warehouses:     6
+Graph Modeling
+Relationships
+Graph Ingestion
+Graph Queries
 ```
 
 ---
 
 ## Milestone 4 — LangGraph Multi-Agent Architecture
 
+**Status: Completed**
+
+```text
+Shared Agent State
+Supervisor Agent
+Data Agent
+RAG Agent
+Graph Agent
+Recommendation Agent
+Conditional Routing
+Agent Error Handling
+Agent Testing
+```
+
+---
+
+## Milestone 5 — Tools & Workflow Integration
+
+**Status: Completed**
+
+```text
+Tool Foundation
+Read-only Operational Tools
+Workflow Action Tools
+Human Approval
+Workflow Action Agent
+Execution Agent
+Controlled Execution
+LangGraph interrupt()
+Command(resume=...)
+Checkpointing
+Human-in-the-Loop
+```
+
+---
+
+## Milestone 6 — Recommendation & Forecasting
+
 **Status: Next**
 
-Planned architecture:
-
-```text
-                    Supervisor
-                        │
-       ┌────────────────┼────────────────┐
-       │                │                │
-       ▼                ▼                ▼
-  Data Agent        RAG Agent       Graph Agent
-       │                │                │
- PostgreSQL          Qdrant          Neo4j
-       │                │                │
-       └────────────────┼────────────────┘
-                        │
-                        ▼
-              Recommendation Agent
-```
-
-Planned work:
-
-* LangGraph state design
-* Supervisor node
-* Data Agent
-* RAG Agent
-* Graph Agent
-* Recommendation Agent
-* Agent routing
-* Shared investigation state
-* Structured agent outputs
-* Conditional workflow edges
-* Agent error handling
-* Agent testing
-
----
-
-# Milestone 5 — Tools & Workflow Integration
-
-**Status: Planned**
-
 Planned capabilities:
 
-* Order tools
-* Inventory tools
-* Supplier tools
-* Shipment tools
-* Workflow tools
-* Function/tool calling
-* Structured tool inputs
-* Structured tool outputs
-* Operational action execution
-* Human approval checkpoints
-* Safe workflow execution
-
-Example:
-
 ```text
-Recommendation
-      ↓
-Human Approval
-      ↓
-Workflow Tool
-      ↓
-Operational Action
+Demand Forecasting
+
+Inventory Risk Prediction
+
+Supplier Risk Scoring
+
+Delivery Delay Prediction
+
+Forecast-based Recommendations
+
+What-if Analysis
 ```
 
 ---
 
-# Milestone 6 — Recommendation & Forecasting
+## Milestone 7 — Evaluation & Observability
 
 **Status: Planned**
 
-This milestone will introduce intelligence beyond retrieval.
-
 Planned capabilities:
-
-* Demand forecasting
-* Inventory forecasting
-* Delay prediction
-* Supplier risk analysis
-* Recommendation engine
-* Statistical models
-* Machine-learning models
-* Rule-based decision logic
-* Structured recommendation outputs
-
-The platform will deliberately choose between:
 
 ```text
-Deterministic Rules
-        OR
-Statistical / ML Model
-        OR
-Generative AI
+LLM Evaluation
+
+Agent Evaluation
+
+RAG Evaluation
+
+Tool-call Evaluation
+
+LLM Tracing
+
+Agent Execution Tracing
+
+Latency Monitoring
+
+Error Tracking
+
+Request IDs
+
+Production Metrics
 ```
 
-depending on the problem.
-
 ---
 
-# Milestone 7 — Evaluation & Observability
+## Milestone 8 — Conversational Interfaces & Production Deployment
 
 **Status: Planned**
 
 Planned capabilities:
 
-## RAG Evaluation
+```text
+Conversational UI
 
-* Recall@K
-* Precision@K
-* MRR
-* Groundedness
-* Context relevance
+WhatsApp Interface
 
-## Agent Evaluation
+Authentication
 
-* Agent routing
-* Tool selection
-* State transitions
-* Decision quality
-* Failure handling
+Role-based Access
 
-## End-to-End Evaluation
+Persistent Checkpointing
 
-* Investigation accuracy
-* Recommendation quality
-* Workflow correctness
-* Safety
-* Latency
+Production Infrastructure
 
-## Observability
+Cloud Deployment
 
-* LLM traces
-* Agent execution traces
-* Tool-call monitoring
-* Request IDs
-* Latency metrics
-* Error tracking
-* Structured logs
-* Metrics
-* Alerting
+Monitoring
 
----
-
-# Milestone 8 — Conversational Interfaces & Production Deployment
-
-**Status: Planned**
-
-Planned capabilities:
-
-* Web conversational interface
-* WhatsApp integration
-* Authentication
-* Authorization
-* Rate limiting
-* Security hardening
-* Database migrations
-* Secrets management
-* Production Docker setup
-* CI/CD
-* Deployment
-* Monitoring
-* Health checks
-* Readiness checks
-* Backup and recovery
-* Documentation
+Security Hardening
+```
 
 ---
 
 # Engineering Principles
 
-## Use Deterministic Logic When Deterministic Logic Is Enough
+## 1. LLM Is Not the Source of Truth
 
-Not every supply-chain decision needs an LLM.
+Operational facts should come from:
 
-Business rules should be preferred when a problem can be solved reliably using deterministic logic.
+```text
+PostgreSQL
+Qdrant
+Neo4j
+```
 
----
-
-## Use ML When Prediction Is Required
-
-Forecasting and predictive problems can use statistical or machine-learning models.
-
----
-
-## Use RAG for Trusted Knowledge
-
-Policies, SOPs, supplier SLAs, and operational documentation should be retrieved from controlled sources.
+not from LLM hallucination.
 
 ---
 
-## Use Knowledge Graphs for Relationships
-
-Neo4j is used when the question depends on relationships between entities.
+## 2. Deterministic Tasks Use Deterministic Logic
 
 For example:
 
 ```text
+If shipment is delayed
+→ identify delayed shipment
+```
+
+Business rules should not depend on an LLM when deterministic logic is sufficient.
+
+---
+
+## 3. RAG for Controlled Knowledge
+
+Policies, SOPs, and supplier rules should be retrieved from the controlled knowledge base.
+
+---
+
+## 4. Graph for Relationships
+
+Neo4j is used when the question requires relationship traversal.
+
+Example:
+
+```text
 Order
-  ↓
-Shipment
-  ↓
-Supplier
-  ↓
-Product
-  ↓
-Warehouse
+ → Shipment
+ → Supplier
 ```
 
 ---
 
-## Use Agents for Multi-Step Investigation
+## 5. Agents for Multi-step Investigation
 
-Agents will coordinate tools and data sources when a question requires multiple reasoning steps.
+Agents coordinate multiple information sources and tools.
 
 ---
 
-## Keep Humans in Control of High-Impact Actions
+## 6. Human Approval for High-impact Actions
 
-Operational actions can require explicit human approval before execution.
-
-The system should distinguish between:
+The system does not allow an agent to directly execute sensitive operational actions without approval.
 
 ```text
-Investigation
-    ↓
-Recommendation
-    ↓
-Approval
-    ↓
+AI Recommendation
+      ↓
+Human Approval
+      ↓
 Execution
 ```
 
 ---
 
-## Evaluate Continuously
+## 7. Controlled Execution Boundary
 
-The system will progressively measure:
+Operational actions are isolated behind tools.
 
-* Retrieval quality
-* Answer quality
-* Groundedness
-* Agent behavior
-* Tool execution
-* Recommendation quality
-* Workflow quality
-* Latency
-* Errors
+```text
+Agent
+  ↓
+Workflow Tool
+  ↓
+Execution Boundary
+  ↓
+External System
+```
+
+This makes future integrations safer and easier to control.
 
 ---
 
 # Development Setup
 
-## 1. Create Virtual Environment
+## 1. Clone Repository
 
 ```bash
+git clone https://github.com/avigithub6/supply-chain-intelligence-platform.git
+cd supply-chain-intelligence-platform
+```
+
+---
+
+## 2. Create Virtual Environment
+
+Windows:
+
+```powershell
 python -m venv .venv
 ```
 
-## 2. Activate Environment
-
-### Windows PowerShell
+Activate:
 
 ```powershell
-.venv\Scripts\Activate.ps1
+.venv\Scripts\activate
 ```
+
+---
 
 ## 3. Install Dependencies
 
@@ -1830,32 +1880,35 @@ pip install -r requirements.txt
 
 # Environment Configuration
 
-Create a `.env` file based on `.env.example`.
+Create:
 
-Example structure:
+```text
+.env
+```
+
+Example:
 
 ```env
-APP_NAME=supply-chain-intelligence-platform
-APP_VERSION=1.0.0
-ENVIRONMENT=development
-
-DATABASE_URL=postgresql+psycopg2://postgres:<password>@localhost:5432/supplychain
+DATABASE_URL=postgresql+psycopg://postgres:your_password@localhost:5432/supplychain
 
 QDRANT_URL=http://localhost:6333
-QDRANT_COLLECTION_NAME=supplychain_knowledge
 
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=<password>
-
-LOG_LEVEL=INFO
+NEO4J_PASSWORD=your_neo4j_password
 ```
-
-Never commit `.env` or database credentials to Git.
 
 ---
 
 # Initialize PostgreSQL
+
+Create the database:
+
+```text
+supplychain
+```
+
+Then run:
 
 ```bash
 python -m app.database.init_db
@@ -1863,38 +1916,50 @@ python -m app.database.init_db
 
 ---
 
-# Generate and Seed Synthetic Data
+# Seed Data
+
+Run:
 
 ```bash
 python -m app.database.seed_data
 ```
 
-This creates:
+Expected seeded data:
 
 ```text
 Suppliers: 50
+
 Inventory: 150
+
 Orders: 1000
+
 Shipments: 1000
-```
-
-and generates CSV files under:
-
-```text
-data/
 ```
 
 ---
 
 # Start Qdrant
 
+Qdrant is configured through Docker Compose.
+
+```yaml
+qdrant:
+  image: qdrant/qdrant:latest
+  container_name: supplychain-qdrant
+  ports:
+    - "6333:6333"
+    - "6334:6334"
+  volumes:
+    - qdrant_storage:/qdrant/storage
+```
+
+Start:
+
 ```bash
 docker compose up -d qdrant
 ```
 
----
-
-# Build RAG Knowledge Index
+Run RAG ingestion:
 
 ```bash
 python -m app.rag.pipeline
@@ -1904,51 +1969,52 @@ python -m app.rag.pipeline
 
 # Start Neo4j
 
+Neo4j is configured through Docker Compose.
+
+```yaml
+neo4j:
+  image: neo4j:5
+  container_name: supplychain-neo4j
+  ports:
+    - "7474:7474"
+    - "7687:7687"
+  environment:
+    NEO4J_AUTH: neo4j/your_neo4j_password
+  volumes:
+    - neo4j_data:/data
+    - neo4j_logs:/logs
+    - neo4j_plugins:/plugins
+```
+
+Start:
+
 ```bash
 docker compose up -d neo4j
 ```
 
----
-
-# Initialize Neo4j Graph Schema
-
-```bash
-python -m app.graph.schema
-```
-
----
-
-# Ingest PostgreSQL Data into Neo4j
-
-```bash
-python -m app.graph.ingestion
-```
-
-Expected graph ingestion summary:
+Neo4j Browser:
 
 ```text
-Suppliers: 50
-Products: 150
-Warehouses: 6
-Orders: 1000
-Shipments: 1000
-Order -> Product relationships: 1000
-Order -> Shipment relationships: 1000
-Shipment -> Supplier relationships: 1000
-Product -> Warehouse relationships: 150
+http://localhost:7474
 ```
 
 ---
 
-# Run the API
+# Run API
+
+Start FastAPI:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
----
+API:
 
-# Open Swagger
+```text
+http://127.0.0.1:8000
+```
+
+Swagger:
 
 ```text
 http://127.0.0.1:8000/docs
@@ -1956,23 +2022,9 @@ http://127.0.0.1:8000/docs
 
 ---
 
-# Neo4j Browser
-
-Neo4j Browser is available locally at:
-
-```text
-http://localhost:7474
-```
-
-Bolt connection:
-
-```text
-bolt://localhost:7687
-```
-
----
-
 # Run Tests
+
+Run the complete test suite:
 
 ```bash
 pytest -v
@@ -1981,336 +2033,410 @@ pytest -v
 Current result:
 
 ```text
-88 passed
+162 passed
 ```
 
 ---
 
 # Complete Platform Flow
 
-The platform currently contains three completed intelligence layers:
+The complete current platform works as follows:
 
 ```text
-                    Supply Chain Platform
-                             │
-          ┌──────────────────┼──────────────────┐
-          │                  │                  │
-          ▼                  ▼                  ▼
-     PostgreSQL            Qdrant             Neo4j
-   Structured Data     Semantic Knowledge   Knowledge Graph
-          │                  │                  │
-          │                  │                  │
-          └──────────────────┼──────────────────┘
-                             │
-                             ▼
-                    Future LangGraph
-                    Multi-Agent System
-                             │
-                             ▼
-                  Recommendation Engine
-                             │
-                             ▼
-                      Human Approval
-                             │
-                             ▼
-                       Workflow Tools
+                         User
+                          ↓
+                    User Query
+                          ↓
+                 FastAPI / Agent Layer
+                          ↓
+                 LangGraph Supervisor
+                          ↓
+       ┌──────────────────┼──────────────────┐
+       ↓                  ↓                  ↓
+  Data Agent          Graph Agent         RAG Agent
+       ↓                  ↓                  ↓
+ PostgreSQL             Neo4j             Qdrant
+       └──────────────────┼──────────────────┘
+                          ↓
+                Recommendation Agent
+                          ↓
+                Workflow Action Agent
+                          ↓
+                   Human Approval
+                     ↙         ↘
+                Rejected       Approved
+                   ↓              ↓
+                  Skip      Execution Agent
+                                  ↓
+                        Workflow Execution Tool
+                                  ↓
+                                Action
 ```
 
 ---
 
 # Example Future Investigation
 
-Question:
+User:
 
 ```text
 Why is order ORD-10482 delayed?
 ```
 
-Potential investigation:
+The platform can investigate:
+
+### Order
 
 ```text
-                    ORD-10482
-                        │
-          ┌─────────────┼─────────────┐
-          │             │             │
-          ▼             ▼             ▼
-     Order Data     Shipment      Product
-     PostgreSQL     SHIP-20482    SKU-0077
-          │             │             │
-          │             ▼             ▼
-          │         Supplier       Inventory
-          │          SUP-017        Mumbai
-          │             │
-          │             ▼
-          │        Supplier SLA
-          │             │
-          └─────────────┼─────────────┘
-                        ▼
-                  Evidence
-                        │
-                        ▼
-                 Recommendation
-                        │
-                        ▼
-                  Human Approval
-                        │
-                        ▼
-                     Action
+ORD-10482
+Status: delayed
+Quantity: 445
+Product: SKU-0077
 ```
 
-This architecture allows the system to combine:
+### Shipment
 
 ```text
-Structured Data
-       +
-Semantic Knowledge
-       +
-Graph Relationships
-       +
-Business Rules
-       +
-Machine Learning
-       +
-LLM Reasoning
+SHIP-20482
+Status: delayed
+Expected delivery: 2026-09-16
 ```
+
+### Supplier
+
+```text
+SUP-017
+Reliability: 62.5
+Location: Pune
+```
+
+### Inventory
+
+```text
+SKU-0077
+Current Stock: 35
+Reorder Point: 250
+Warehouse: Mumbai
+```
+
+### Knowledge
+
+The RAG layer can retrieve relevant:
+
+```text
+Supplier SLA
+Supplier Delay Policy
+Delayed Order SOP
+Inventory Replenishment SOP
+Supplier Escalation Policy
+```
+
+### Recommendation
+
+The deterministic recommendation layer can identify:
+
+```text
+Delayed shipment requires operational review.
+
+Supplier SUP-017 has low reliability.
+
+Inventory for SKU-0077 is below the reorder point.
+```
+
+### Workflow
+
+The recommendation can become:
+
+```text
+Workflow Action
+       ↓
+Pending Approval
+```
+
+A human can then approve or reject the proposed operational action.
 
 ---
 
 # Production-Oriented Design
 
-The project is currently **production-oriented / production-style in development**, rather than production-ready.
+The project is intentionally structured around production-oriented engineering principles.
 
-Implemented engineering principles include:
+### Separation of Responsibilities
 
-* Separation of concerns
-* Configuration management
-* Environment-based settings
-* Service-layer architecture
-* Database abstraction
-* Input validation
-* Error handling
-* Automated testing
-* Deterministic business logic
-* RAG retrieval
-* Vector database
-* Knowledge graph
-* Batch data ingestion
-* Idempotent graph synchronization
-* Request tracking
-* Latency measurement
-* Error tracking
-* Modular AI components
+```text
+API Layer
+    ↓
+Service Layer
+    ↓
+Data Layer
+```
 
-Production-hardening work is intentionally reserved for later milestones.
+Agentic layer:
+
+```text
+Supervisor
+    ↓
+Specialized Agents
+    ↓
+Tools
+    ↓
+Execution Boundary
+```
+
+---
+
+# Production Safety Model
+
+The platform separates:
+
+```text
+Investigation
+```
+
+from:
+
+```text
+Action
+```
+
+and:
+
+```text
+Execution
+```
+
+This means an agent can investigate and recommend an action without automatically performing the action.
+
+The intended production flow is:
+
+```text
+Read
+ ↓
+Analyze
+ ↓
+Recommend
+ ↓
+Request Approval
+ ↓
+Approve
+ ↓
+Execute
+```
 
 ---
 
 # Planned Production Hardening
 
-Future production work includes:
+Future production hardening will include:
 
+* Persistent LangGraph checkpoint storage
 * Authentication
 * Authorization
-* Security controls
+* Role-based access
+* Audit logs
+* External workflow integrations
+* ERP integrations
+* Supplier portal integrations
+* Email integrations
+* Ticketing integrations
+* Production observability
+* LLM tracing
+* Agent tracing
+* Retry strategies
 * Rate limiting
-* Database migrations
-* Secrets management
-* Production logging
-* Distributed tracing
-* Metrics and alerting
-* Reliability controls
-* CI/CD
-* Container hardening
-* Deployment
-* Monitoring
-* Backup and recovery
-* End-to-end AI evaluation
-* Model monitoring
-* Operational alerting
+* Security hardening
+* Deployment automation
+* Cloud infrastructure
 
 ---
 
 # Current Project Status
 
+## Milestone 1
+
 ```text
-Milestone 1 — Data & Backend Foundation
-
 ████████████████████ 100%
+```
 
+## Milestone 2
 
-Milestone 2 — RAG Knowledge System
-
+```text
 ████████████████████ 100%
+```
 
+## Milestone 3
 
-Milestone 3 — Knowledge Graph
-
+```text
 ████████████████████ 100%
+```
 
+## Milestone 4
 
-Milestone 4 — LangGraph Multi-Agent Architecture
+```text
+████████████████████ 100%
+```
 
-░░░░░░░░░░░░░░░░░░░░   0%
+## Milestone 5
 
+```text
+████████████████████ 100%
+```
 
-Milestone 5 — Tools & Workflow Integration
+## Milestone 6
 
-░░░░░░░░░░░░░░░░░░░░   0%
+```text
+░░░░░░░░░░░░░░░░░░░░ 0%
+```
 
+## Milestone 7
 
-Milestone 6 — Recommendation & Forecasting
+```text
+░░░░░░░░░░░░░░░░░░░░ 0%
+```
 
-░░░░░░░░░░░░░░░░░░░░   0%
+## Milestone 8
 
-
-Milestone 7 — Evaluation & Observability
-
-░░░░░░░░░░░░░░░░░░░░   0%
-
-
-Milestone 8 — Conversational Interfaces & Production Deployment
-
-░░░░░░░░░░░░░░░░░░░░   0%
+```text
+░░░░░░░░░░░░░░░░░░░░ 0%
 ```
 
 ---
 
 # Milestone 3 Outcome
 
-Milestone 3 transformed the platform from having only structured and semantic knowledge into a system that also understands **relationships between supply-chain entities**.
+Milestone 3 established the relationship intelligence layer using Neo4j.
 
-The platform now has:
+The platform can now understand relationships between:
 
 ```text
-✓ FastAPI backend
-
-✓ PostgreSQL operational data
-
-✓ Service layer
-
-✓ Controlled knowledge base
-
-✓ Document ingestion
-
-✓ Document chunking
-
-✓ Sentence Transformer embeddings
-
-✓ Qdrant vector database
-
-✓ Semantic retrieval
-
-✓ Deterministic reranking
-
-✓ RAG API
-
-✓ Request ID tracking
-
-✓ Latency tracking
-
-✓ Error tracking
-
-✓ RAG evaluation foundation
-
-✓ Neo4j knowledge graph
-
-✓ Graph schema
-
-✓ Graph constraints
-
-✓ Cypher queries
-
-✓ PostgreSQL → Neo4j ingestion
-
-✓ Relationship-based investigation
-
-✓ 88 passing tests
+Orders
+Products
+Warehouses
+Shipments
+Suppliers
 ```
 
-The project is now ready to move from **relationship-based intelligence** to **multi-agent orchestration**.
+This became one of the core information sources used by the multi-agent architecture introduced in Milestone 4.
+
+---
+
+# Milestone 5 Outcome
+
+Milestone 5 established the operational workflow layer.
+
+The platform can now move from:
+
+```text
+Investigation
+```
+
+to:
+
+```text
+Recommendation
+```
+
+to:
+
+```text
+Workflow Action
+```
+
+to:
+
+```text
+Human Approval
+```
+
+to:
+
+```text
+Controlled Execution
+```
+
+The implementation currently provides a safe execution foundation without performing real external side effects.
 
 ---
 
 # Next Milestone
 
-## Milestone 4 — LangGraph Multi-Agent Architecture
+## Milestone 6 — Recommendation & Forecasting
 
-The next milestone will introduce **LangGraph** and build the initial multi-agent architecture.
+The next major milestone will extend the deterministic recommendation layer with predictive intelligence.
 
-Planned structure:
+Planned capabilities:
 
 ```text
-                       User Query
-                           │
-                           ▼
-                    LangGraph Supervisor
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-          ▼                ▼                ▼
-      Data Agent        RAG Agent       Graph Agent
-          │                │                │
-          ▼                ▼                ▼
-     PostgreSQL          Qdrant           Neo4j
-          │                │                │
-          └────────────────┼────────────────┘
-                           │
-                           ▼
-                  Recommendation Agent
+Demand Forecasting
+        ↓
+Inventory Risk Prediction
+        ↓
+Supplier Risk Scoring
+        ↓
+Delivery Delay Prediction
+        ↓
+Forecast-based Recommendations
+        ↓
+What-if Analysis
 ```
 
-The milestone will focus on:
-
-* LangGraph
-* Shared agent state
-* Supervisor routing
-* Data Agent
-* RAG Agent
-* Graph Agent
-* Recommendation Agent
-* Conditional workflow edges
-* Structured outputs
-* Agent error handling
-* Agent testing
-* End-to-end investigation flow
-
-The first major target will be an agentic investigation of:
+The objective is to move the platform from:
 
 ```text
-"Why is order ORD-10482 delayed?"
+Reactive Investigation
+```
+
+towards:
+
+```text
+Predictive Supply Chain Intelligence
 ```
 
 ---
 
 # Engineering Vision
 
-The long-term goal is not to build an LLM wrapper.
-
-The goal is to build an **agentic supply-chain intelligence platform** where:
+The long-term vision is to build a production-grade **Agentic Supply Chain Intelligence & Operations Platform** capable of:
 
 ```text
-Structured Data
-       +
-Knowledge Retrieval
-       +
-Knowledge Graph
-       +
-Business Rules
-       +
-Machine Learning
-       +
-LLM Reasoning
-       +
-Tool Execution
-       +
-Human Approval
-       +
-Evaluation
-       +
-Observability
+Understand
+    ↓
+Investigate
+    ↓
+Retrieve
+    ↓
+Reason
+    ↓
+Predict
+    ↓
+Recommend
+    ↓
+Request Approval
+    ↓
+Execute
+    ↓
+Monitor
 ```
 
-work together as a controlled operational intelligence system.
+The platform is designed to combine:
+
+```text
+Machine Learning
++
+Generative AI
++
+RAG
++
+Knowledge Graphs
++
+Multi-Agent Systems
++
+Workflow Automation
++
+Human-in-the-Loop
+```
+
+while maintaining deterministic operational controls wherever required.
 
 ---
 
@@ -2318,4 +2444,55 @@ work together as a controlled operational intelligence system.
 
 **Avinash Gupta**
 
-Building an agentic AI system for supply-chain intelligence, retrieval, reasoning, recommendations, and operational workflows.
+GitHub:
+
+https://github.com/avigithub6
+
+LinkedIn:
+
+https://linkedin.com/in/theavinashgupta5/
+
+---
+
+# Project Repository
+
+```text
+https://github.com/avigithub6/supply-chain-intelligence-platform
+```
+
+---
+
+## Current Milestone Summary
+
+```text
+Milestone 1  ✅ Completed
+Milestone 2  ✅ Completed
+Milestone 3  ✅ Completed
+Milestone 4  ✅ Completed
+Milestone 5  ✅ Completed
+Milestone 6  🔜 Next
+Milestone 7  ⏳ Planned
+Milestone 8  ⏳ Planned
+```
+
+**Current achievement:**
+
+```text
+Foundation
+    ↓
+RAG
+    ↓
+Knowledge Graph
+    ↓
+Multi-Agent Architecture
+    ↓
+Tools
+    ↓
+Workflow Actions
+    ↓
+Human Approval
+    ↓
+Controlled Execution
+```
+
+The project has now progressed from a traditional backend/data platform into an **agentic, multi-source, human-controlled supply-chain intelligence system**.
